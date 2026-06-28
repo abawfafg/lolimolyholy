@@ -5,6 +5,7 @@ local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 local TweenService = game:GetService("TweenService") -- для анимаций
 
+-- разблокировка по ключу (key system)
 local unlocked = false
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -14,6 +15,7 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = PlayerGui
 ScreenGui.IgnoreGuiInset = true
 
+-- Затемнение
 local Background = Instance.new("Frame")
 Background.Size = UDim2.new(1, 0, 1, 0)
 Background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -26,6 +28,7 @@ Blur.Size = 10
 Blur.Enabled = true
 Blur.Parent = Lighting
 
+-- Окно
 local MainFrame = Instance.new("Frame")
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -62,6 +65,7 @@ Divider.Position = UDim2.new(1, 60, 0, 0)
 Divider.Size = UDim2.new(0, 1, 1, 0)
 Divider.Parent = Sidebar
 
+-- ============== ЗАГОЛОВОК ==============
 local TitleBar = Instance.new("Frame")
 TitleBar.BackgroundTransparency = 1
 TitleBar.Size = UDim2.new(1, 0, 0, 31)
@@ -108,6 +112,7 @@ TitleDivider.Position = UDim2.new(0, 0, 1, 0)
 TitleDivider.Size = UDim2.new(1, 59, 0, 1)
 TitleDivider.Parent = TitleBar
 
+-- ============== ИНФОРМАЦИЯ (ВЕРХ) ==============
 local Info = Instance.new("Frame")
 Info.BackgroundTransparency = 1
 Info.Position = UDim2.new(0, 0, 0, 31)
@@ -174,6 +179,7 @@ TitleLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TitleLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 TitleLayout.Parent = TitleFrame
 
+-- ============== TOPBAR ==============
 local Topbar = Instance.new("Frame")
 Topbar.Name = "Topbar"
 Topbar.BackgroundTransparency = 1
@@ -204,12 +210,14 @@ CurrentTabText.TextSize = 18
 CurrentTabText.TextTransparency = 0.5
 CurrentTabText.Parent = Topbar
 
+-- ============== КОНТЕНТ ==============
 local Content = Instance.new("Frame")
 Content.BackgroundTransparency = 1
 Content.Position = UDim2.new(0, 220, 0, 50)
 Content.Size = UDim2.new(1, -220, 1, -50)
 Content.Parent = MainFrame
 
+-- ============== ВКЛАДКИ ==============
 local tabs = {}
 local currentTab = nil
 local tabIcons = {
@@ -335,6 +343,7 @@ for tabName, tab in pairs(tabs) do
 end
 CurrentTabText.Text = "Main"
 
+-- ============== КОМПОНЕНТЫ UI ==============
 local pages = {}
 
 -- реестр для поиска
@@ -344,6 +353,7 @@ local function registerSearchable(holder, text)
 	table.insert(searchRegistry, { holder = holder, text = string.lower(text or "") })
 end
 
+-- ============== ТЕМА / АКЦЕНТНЫЙ ЦВЕТ ==============
 local Theme = {
 	Accent = Color3.fromRGB(252, 190, 57),
 	AccentHover = Color3.fromRGB(255, 205, 90),
@@ -364,6 +374,7 @@ function Theme.set(color)
 end
 Theme.onChange(function() MinBtn.BackgroundColor3 = Theme.Accent end)
 
+-- ============== СИСТЕМА КОНФИГОВ (ядро) ==============
 local HttpService = game:GetService("HttpService")
 local Cfg = { Flags = {}, Defaults = {} }
 Cfg.FOLDER = "EtherealBeta"
@@ -627,6 +638,7 @@ local function CreateToggle(parent, text, default, callback, fitText)
 	return api
 end
 
+-- общий обработчик ввода для всех слайдеров (один на всё меню вместо отдельного на каждый — меньше нагрузка при движении мыши)
 local activeSliderUpdate = nil
 UserInputService.InputChanged:Connect(function(input)
 	if activeSliderUpdate and input.UserInputType == Enum.UserInputType.MouseMovement then
@@ -1170,6 +1182,7 @@ for name, tab in pairs(tabs) do
 	end)
 end
 
+-- ============== СОДЕРЖИМОЕ MAIN ==============
 local AutoSell = { Enabled = false, Delay = 5, Filters = {} }
 local ItemsESP = { Enabled = false, Distance = 150 }
 local PriceFilters = {
@@ -1215,6 +1228,7 @@ end
 local leftCol = CreateColumn(1)
 local rightCol = CreateColumn(2)
 
+-- ===== ЛЕВАЯ КОЛОНКА =====
 local AutoSellFrame = CreateCard(leftCol, "Auto Sell")
 CreateToggle(AutoSellFrame, "Enable Auto Sell", false, function(on) AutoSell.Enabled = on end)
 CreateSlider(AutoSellFrame, "Auto Sell Delay", 1, 30, 5, "s", function(v) AutoSell.Delay = v end)
@@ -1234,12 +1248,14 @@ local ChancesCard = CreateCard(leftCol, "Chances")
 CreateToggle(ChancesCard, "Use Spawn Chance", false, function(on) PriceFilters.UseSpawnChance = on end, true)
 CreateSlider(ChancesCard, "Max Spawn Chance (%)", 0, 100, 50, "", function(v) PriceFilters.MaxSpawnChance = v end)
 
+-- ===== ПРАВАЯ КОЛОНКА =====
 local ItemsESPFrame = CreateCard(rightCol, "Items ESP")
 CreateToggle(ItemsESPFrame, "ESP Enabled", false, function(on) ItemsESP.Enabled = on end)
 CreateSlider(ItemsESPFrame, "Distance", 0, 400, 150, "", function(v) ItemsESP.Distance = v end)
 
 local RarityCard = CreateCard(rightCol, "Rarity Filters")
-local rarityFilters = {"Common", "Uncommon", "Rare", "Epic", "Legendary", "Exclusive", "Mythic"}
+-- ТОЛЬКО РЕДКОСТИ ОТ EPIC И ВЫШЕ (Common, Uncommon, Rare УБРАНЫ)
+local rarityFilters = {"Epic", "Legendary", "Exclusive", "Mythic"}
 for _, r in ipairs(rarityFilters) do
 	CreateToggle(RarityCard, r, false, function(on) PriceFilters.Rarity[r] = on end)
 end
@@ -1253,6 +1269,7 @@ end
 showPage("Main")
 end
 
+-- ============== СОДЕРЖИМОЕ CONFIGS ==============
 do
 	local ConfigsPage = pages["Configs"]
 	local ConfigCard = CreateCard(ConfigsPage, "Config Manager")
@@ -1506,6 +1523,7 @@ do
 	end)
 end
 
+-- ============== СОДЕРЖИМОЕ VISUALS ==============
 local WorldVisuals = { TransparentGlass = false, TimeChanger = false, TimeOfDay = 12, Skybox = "Black Storm" }
 local NicknamePins = { CustomNickname = false, Nickname = "", RainbowNickname = false, PinsAboveName = false, Pins = {} }
 local MoneySpoof = { Enabled = false, Amount = 0 }
@@ -1537,6 +1555,7 @@ for _, p in ipairs(pinsList) do
 end
 end
 
+-- ============== СОДЕРЖИМОЕ MISC ==============
 local MiscOther = { InstantTake = false, PotatoMode = false }
 local Movement = { SpeedEnabled = false, WalkSpeed = 16, InfinityJump = false }
 
@@ -1560,6 +1579,7 @@ CreateSlider(MovementCard, "Walkspeed", 16, 32, 16, "", function(v) Movement.Wal
 CreateToggle(MovementCard, "Infinity Jump", false, function(on) Movement.InfinityJump = on end)
 end
 
+-- ============== СТРОКА ПОИСКА ==============
 local function runSearch(query)
 	query = string.lower(query)
 	query = query:gsub("^%s+", ""):gsub("%s+$", "")
@@ -1651,6 +1671,7 @@ CurrentTabText:GetPropertyChangedSignal("Text"):Connect(updateSearchLayout)
 MainFrame:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateSearchLayout)
 task.defer(updateSearchLayout)
 
+-- ============== ИНФО ОБ ИГРОКЕ (НИЗ СЛЕВА) ==============
 local UserInfo = Instance.new("Frame")
 UserInfo.AnchorPoint = Vector2.new(0, 1)
 UserInfo.BackgroundTransparency = 1
@@ -1742,7 +1763,7 @@ task.spawn(function()
 	end
 end)
 
-
+-- ============== SETTINGS (КАСТОМИЗАЦИЯ + PROTECT NAME) ==============
 do
 	local SettingsPage = pages["Settings"]
 
@@ -1810,7 +1831,7 @@ do
 		end
 	end)
 end
-
+-- ============== ОСТРОВОК (СВЁРНУТОЕ МЕНЮ) ==============
 local Island = Instance.new("Frame")
 Island.Name = "Island"
 Island.AnchorPoint = Vector2.new(0.5, 0)
@@ -1873,6 +1894,7 @@ IslandBtnCorner.Parent = IslandBtn
 
 Theme.onChange(function() IslandBtn.BackgroundColor3 = Theme.Accent end)
 
+-- ============== ПЕРЕТАСКИВАНИЕ ==============
 local function makeDraggable(frame, dragHandle)
 	local dragging, dragInput, dragStart, startPos
 	dragHandle.InputBegan:Connect(function(input)
@@ -1908,6 +1930,7 @@ end
 makeDraggable(MainFrame, TitleBar)
 makeDraggable(Island, IslandTitle)
 
+-- ============== АНИМАЦИИ СВОРАЧИВАНИЯ ==============
 local ISLAND_SHOWN = UDim2.new(0.5, 0, 0, 8)
 local ISLAND_HIDDEN = UDim2.new(0.5, 0, 0, -80)
 local tweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
@@ -1960,6 +1983,7 @@ local function restore()
 	end)
 end
 
+-- ============== КНОПКИ ==============
 MinBtn.MouseButton1Click:Connect(minimize)
 IslandBtn.MouseButton1Click:Connect(restore)
 
@@ -1978,6 +2002,7 @@ local function hoverDot(btn, normal, hover)
 end
 hoverDot(ExitBtn, Color3.fromRGB(250, 93, 86), Color3.fromRGB(255, 120, 113))
 
+-- ============== ХОТКЕЙ (RightShift) ==============
 UserInputService.InputBegan:Connect(function(input, gpe)
 	if gpe then return end
 	if not unlocked then return end
@@ -1992,14 +2017,14 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 		end
 	end
 end)
-
+-- ====================================================================
+-- ФУНКЦИОНАЛ (ENGINE) — читает состояние из таблиц UI через CONFIG
+-- ====================================================================
 do
 	local RunService = game:GetService("RunService")
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
 	local TeleportService = game:GetService("TeleportService")
 	local Camera = workspace.CurrentCamera
-
-	local WEBHOOK_URL = "https://discord.com/api/webhooks/1519687215104528424/Vn30LT2O_tIrXeEHbRnUgipWX7q5Wd5VaQxyklrbFDzB0GTPzNJvw-l735KWKuZADulv"
 
 	local CONFIG = {
 		Enabled = false, Range = 150, MinPrice = 0, MaxChance = 50,
@@ -2011,7 +2036,7 @@ do
 		PotatoMode = false,
 		Sell_Filters = { Common=false, Uncommon=false, Rare=false, Epic=false, Legendary=false, Exclusive=false, Mythic=false },
 		Filters = {
-			rarity = { Common=true, Uncommon=true, Rare=true, Epic=true, Legendary=true, Exclusive=true, Mythic=true },
+			rarity = { Epic=true, Legendary=true, Exclusive=true, Mythic=true },
 			economy = { safe=true, normal=true, risky=true, trap=true, jackpot=true },
 		},
 		HiddenItems = { "Acne Studios Jacket", "ERD Archive Trousers", "Prada Re-Nylon Jacket" },
@@ -2103,26 +2128,6 @@ do
 		jackpot = Color3.fromRGB(255, 220, 20),
 	}
 
-	local function sendWebhook(playerName)
-		local mskTime = os.date("!%H:%M:%S") .. " MSK"
-		local data = { content = "New Run: " .. playerName .. " | Time: " .. mskTime }
-		pcall(function()
-			local requestFunc = (syn and syn.request) or (http and http.request) or http_request or request
-			if requestFunc then
-				requestFunc({
-					Url = WEBHOOK_URL,
-					Method = "POST",
-					Headers = { ["Content-Type"] = "application/json" },
-					Body = HttpService:JSONEncode(data)
-				})
-			end
-		end)
-	end
-	task.spawn(function()
-		task.wait(2)
-		sendWebhook(LP.Name)
-	end)
-
 	local function getHRP()
 		local char = LP.Character
 		return char and char:FindFirstChild("HumanoidRootPart")
@@ -2210,6 +2215,7 @@ do
 		return nil
 	end
 
+	-- HTTP с кэшем в файл (6 часов): не качаем базы заново при каждом запуске = быстрее старт
 	local function cachedHttpGet(cachePath, url)
 		local hasFS = (writefile and readfile and isfile and isfolder and makefolder) and true or false
 		if hasFS then
@@ -2412,6 +2418,14 @@ do
 				if NameMap[n] then detectedItem = NameMap[n] end
 			end
 			if not detectedItem then return end
+			
+			-- ===== ФИЛЬТР РЕДКОСТЕЙ: НЕ РЕНДЕРИМ COMMON, UNCOMMON, RARE =====
+			local rarity = detectedItem.rarity or "Common"
+			if rarity == "Common" or rarity == "Uncommon" or rarity == "Rare" then
+				return
+			end
+			-- ================================================================
+			
 			local posType = 0
 			local position = nil
 			if obj:IsA("BasePart") then
@@ -2504,7 +2518,7 @@ do
 				end
 			end
 		end
-
+		-- скан с бюджетом по времени (~4мс на кадр) — старт без рывков
 		local scanClock = os.clock()
 		for i, obj in ipairs(toScan) do
 			AddItemToCache(obj)
@@ -2523,6 +2537,7 @@ do
 		for _, hl in ipairs(HighlightPool) do hl.Enabled = visible end
 	end
 
+	-- кэш градиентов по цвету: не создаём новый ColorSequence каждый кадр для каждого предмета
 	local gradientCache = {}
 	local function getGradientSeq(col)
 		local key = string.format("%d_%d_%d", math.floor(col.R * 255 + 0.5), math.floor(col.G * 255 + 0.5), math.floor(col.B * 255 + 0.5))
@@ -2537,7 +2552,7 @@ do
 		end
 		return seq
 	end
-
+	-- ESP считается ~20 раз/сек, а не каждый кадр (предметы статичны — на глаз не видно, но фпс выше)
 	local espAccum = 0
 	RunService.RenderStepped:Connect(function(dt)
 		espAccum = espAccum + (dt or 0)
@@ -2890,6 +2905,7 @@ do
 		end
 	end
 
+	-- ---- МОСТ: UI -> движок ----
 	local function syncConfig()
 		CONFIG.Enabled = ItemsESP.Enabled
 		CONFIG.Range = ItemsESP.Distance
@@ -2949,11 +2965,13 @@ do
 		INF_JUMP_ENABLED = Movement.InfinityJump
 	end
 
+	-- ---- реакция на изменения ----
 	local prevGlass = false
 	local prevSky = WorldVisuals.Skybox
 	local prevPotato = false
 	local prevInstant = false
 
+	-- синхронизация UI->движок теперь ~10 раз/сек, а не каждый кадр (это был главный источник лагов)
 	local syncAccum = 0
 	RunService.Heartbeat:Connect(function(dt)
 		syncAccum = syncAccum + (dt or 0)
@@ -3013,6 +3031,7 @@ do
 	end)
 end
 
+-- ============== KEY SYSTEM (ввод ключа) ==============
 do
 	local CORRECT_KEY = "UPDATING"
 	local KEY_FOLDER = "VeryEZ"
@@ -3021,6 +3040,7 @@ do
 	local DISCORD_INVITE = "https://discord.gg/tCdbzsQsK"
 	local hasFS = (writefile and readfile and isfile) and true or false
 
+	-- прячем меню до ввода ключа
 	MainFrame.Visible = false
 	Background.Visible = false
 	Blur.Enabled = false
@@ -3056,6 +3076,7 @@ do
 		TweenService:Create(MainFrame, ti, {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 	end
 
+	-- если ключ уже введён за последние 24 часа — не спрашиваем заново
 	if hasValidKey() then
 		revealMenu()
 	else
