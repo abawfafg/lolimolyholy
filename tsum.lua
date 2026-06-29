@@ -2296,6 +2296,50 @@ do
 				end
 			end
 		end
+		
+		-- ДОБАВЛЯЕМ iPhone В БАЗУ АКСЕССУАРОВ
+		local iPhones = {
+			{
+				id = 126572492692446,
+				name = "iPhone 16",
+				meshId = "rbxassetid://126572492692446",
+				accessoryType = "Shoulder",
+				rarity = "Legendary",
+				fairPrice = 95000,
+				spawnChance = 2,
+				economyProfile = "normal"
+			},
+			{
+				id = 78488916364145,
+				name = "iPhone 17 Pro Max Черный",
+				meshId = "rbxassetid://78488916364145",
+				accessoryType = "Shoulder",
+				rarity = "Legendary",
+				fairPrice = 165000,
+				spawnChance = 2,
+				economyProfile = "risky"
+			},
+			{
+				id = 77996010468872,
+				name = "iPhone 17 Pro Max Оранжевый",
+				meshId = "rbxassetid://77996010468872",
+				accessoryType = "Shoulder",
+				rarity = "Legendary",
+				fairPrice = 165000,
+				spawnChance = 2,
+				economyProfile = "risky"
+			}
+		}
+		
+		for _, phone in ipairs(iPhones) do
+			table.insert(accessories, phone)
+			if phone.meshId and phone.meshId ~= "" then				local mId = phone.meshId:lower():gsub("\\", "")
+				if not MeshMap[mId] then MeshMap[mId] = {} end
+				table.insert(MeshMap[mId], phone)
+			end
+			NameMap[phone.name:lower()] = phone
+		end
+		
 		for _, item in ipairs(accessories) do
 			if item.meshId and item.meshId ~= "" then
 				local mId = item.meshId:lower():gsub("\\", "")
