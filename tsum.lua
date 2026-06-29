@@ -2849,42 +2849,95 @@ do
 	VeryEZ_ServerHop = teleportToRandomServer
 
 	local function autoSell()
-		local BarigaRemotes = ReplicatedStorage:FindFirstChild("BarigaRemotes")
-		if not BarigaRemotes then return end
-		local GetBarigaInventory = BarigaRemotes:FindFirstChild("GetBarigaInventory")
-		local GetBarigaOffer = BarigaRemotes:FindFirstChild("GetBarigaOffer")
-		local ConfirmBarigaSale = BarigaRemotes:FindFirstChild("ConfirmBarigaSale")
-		local TriggerBariga = BarigaRemotes:FindFirstChild("TriggerBariga")
-		if not GetBarigaInventory or not GetBarigaOffer then return end
-		local success, inventory = pcall(function() return GetBarigaInventory:InvokeServer() end)
-		if not success or type(inventory) ~= "table" then return end
-		local itemsToSell = {}
-		for _, item in pairs(inventory) do
-			if type(item) == "table" and item.uid and item.purchaseSource ~= "BERO" then
-				local rarity = item.rarity or "Unknown"
-				if CONFIG.Sell_Filters[rarity] then
-					table.insert(itemsToSell, item.uid)
-				end
+	local BarigaRemotes = ReplicatedStorage:FindFirstChild("BarigaRemotes")
+	if not BarigaRemotes then return end
+	
+	local GetBarigaInventory = BarigaRemotes:FindFirstChild("GetBarigaInventory")
+	local GetBarigaOffer = BarigaRemotes:FindFirstChild("GetBarigaOffer")
+	local ConfirmBarigaSale = BarigaRemotes:FindFirstChild("ConfirmBarigaSale")
+	local TriggerBariga = BarigaRemotes:FindFirstChild("TriggerBariga")
+	
+	if not GetBarigaInventory or not GetBarigaOffer then return end
+	
+	local ApartmentRemotes = ReplicatedStorage:FindFirstChild("ApartmentRemotes")
+	local ExitBuilding = nil
+	if ApartmentRemotes then
+		ExitBuilding = ApartmentRemotes:FindFirstChild("ExitBuilding")
+	end
+	
+	local success, inventory = pcall(function() return GetBarigaInventory:InvokeServer() end)
+	if not success or type(inventory) ~= "table" then return end
+	
+	local itemsToSell = {}
+	for _, item in pairs(inventory) do
+		if type(item) == "table" and item.uid and item.purchaseSource ~= "BERO" then
+			local rarity = item.rarity or "Unknown"
+			if CONFIG.Sell_Filters[rarity] then
+				table.insert(itemsToSell, item.uid)
 			end
 		end
-		if #itemsToSell == 0 then return end
-		local char = LP.Character
-		if not char then return end
-		local hrp = char:FindFirstChild("HumanoidRootPart")
-		if not hrp then return end
-		local targetPos = CFrame.new(-3616.0456542969, 327.11117553711, -234.45213317871)
-		hrp.CFrame = targetPos
-		task.wait(0.5)
-		if TriggerBariga then TriggerBariga:FireServer() end
-		task.wait(0.5)
-		local ok, result = pcall(function() return GetBarigaOffer:InvokeServer(itemsToSell) end)
-		if ok and result and result.success then
-			task.wait(0.5)
-			if ConfirmBarigaSale then ConfirmBarigaSale:FireServer(true) end
-		else
-			if ConfirmBarigaSale then ConfirmBarigaSale:FireServer(false) end
+	end
+	
+	if #itemsToSell == 0 then return end
+	
+	local char = LP.Character
+	if not char then return end
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+	
+	local startPosition = hrp.CFrame
+	
+	if ExitBuilding then
+		if ExitBuilding:IsA("RemoteEvent") then
+			pcall(function() ExitBuilding:FireServer() end)
+		elseif ExitBuilding:IsA("RemoteFunction") then
+			pcall(function() ExitBuilding:InvokeServer() end)
 		end
 	end
+	
+	task.wait(0.15)
+	
+	local targetPos = CFrame.new(-5833.54, 4573.22, -2503.59)
+	hrp.CFrame = targetPos
+	hrp.Velocity = Vector3.new(0, 0, 0)
+	
+	task.wait(0.5)
+	
+	if TriggerBariga then 
+		pcall(function() TriggerBariga:FireServer() end)
+	end
+	
+	task.wait(0.5)
+	
+	local ok, result = pcall(function() return GetBarigaOffer:InvokeServer(itemsToSell) end)
+	if ok and result and result.success then
+		task.wait(0.5)
+		if ConfirmBarigaSale then 
+			pcall(function() ConfirmBarigaSale:FireServer(true) end)
+		end
+	else
+		if ConfirmBarigaSale then 
+			pcall(function() ConfirmBarigaSale:FireServer(false) end)
+		end
+	end
+	
+	task.wait(5)
+	
+	if ExitBuilding then
+		if ExitBuilding:IsA("RemoteEvent") then
+			pcall(function() ExitBuilding:FireServer() end)
+		elseif ExitBuilding:IsA("RemoteFunction") then
+			pcall(function() ExitBuilding:InvokeServer() end)
+		end
+		task.wait(0.15)
+	end
+	
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if hrp then
+		hrp.CFrame = startPosition
+		hrp.Velocity = Vector3.new(0, 0, 0)
+	end
+end
 	
 	task.spawn(function()
 		while true do
