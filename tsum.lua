@@ -3054,7 +3054,7 @@ end
 
 -- ============== KEY SYSTEM ==============
 do
-	local CORRECT_KEY = "UPDATING"
+	local CORRECT_KEY = "LEGKO"
 	local KEY_FOLDER = "VeryEZ"
 	local KEY_FILE = "VeryEZ/key.json"
 	local KEY_TTL = 24 * 60 * 60
