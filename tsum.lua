@@ -3,9 +3,9 @@ local LP = Players.LocalPlayer
 local PlayerGui = LP:WaitForChild("PlayerGui")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
-local TweenService = game:GetService("TweenService") -- для анимаций
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
 
--- разблокировка по ключу (key system)
 local unlocked = false
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -15,7 +15,6 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = PlayerGui
 ScreenGui.IgnoreGuiInset = true
 
--- Затемнение
 local Background = Instance.new("Frame")
 Background.Size = UDim2.new(1, 0, 1, 0)
 Background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -28,6 +27,30 @@ Blur.Size = 10
 Blur.Enabled = true
 Blur.Parent = Lighting
 
+-- ===== АДАПТИВНЫЙ РАЗМЕР ЭКРАНА =====
+local screenSize = workspace.CurrentCamera.ViewportSize
+local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+
+local calculatedWidth, calculatedHeight, sidebarWidth
+
+if isMobile then
+    local maxWidth = math.min(650, screenSize.X - 20)
+    local maxHeight = math.min(500, screenSize.Y - 20)
+    local aspectRatio = 650 / 500
+    calculatedWidth = maxWidth
+    calculatedHeight = calculatedWidth / aspectRatio
+    if calculatedHeight > maxHeight then
+        calculatedHeight = maxHeight
+        calculatedWidth = calculatedHeight * aspectRatio
+    end
+    sidebarWidth = math.min(140, calculatedWidth * 0.25)
+    sidebarWidth = math.max(90, sidebarWidth)
+else
+    calculatedWidth = 650
+    calculatedHeight = 500
+    sidebarWidth = 160
+end
+
 -- Окно
 local MainFrame = Instance.new("Frame")
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -35,7 +58,7 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BackgroundTransparency = 0.05
 MainFrame.BorderSizePixel = 0
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-MainFrame.Size = UDim2.new(0, 650, 0, 500)
+MainFrame.Size = UDim2.new(0, calculatedWidth, 0, calculatedHeight)
 MainFrame.ClipsDescendants = true
 MainFrame.Visible = true
 MainFrame.Parent = ScreenGui
@@ -53,7 +76,7 @@ Stroke.Parent = MainFrame
 -- Сайдбар
 local Sidebar = Instance.new("Frame")
 Sidebar.BackgroundTransparency = 1
-Sidebar.Size = UDim2.new(0, 160, 1, 0)
+Sidebar.Size = UDim2.new(0, sidebarWidth, 1, 0)
 Sidebar.Parent = MainFrame
 
 local Divider = Instance.new("Frame")
@@ -61,7 +84,7 @@ Divider.AnchorPoint = Vector2.new(1, 0)
 Divider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Divider.BackgroundTransparency = 0.9
 Divider.BorderSizePixel = 0
-Divider.Position = UDim2.new(1, 60, 0, 0)
+Divider.Position = UDim2.new(1, 8, 0, 0)
 Divider.Size = UDim2.new(0, 1, 1, 0)
 Divider.Parent = Sidebar
 
@@ -109,7 +132,7 @@ TitleDivider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 TitleDivider.BackgroundTransparency = 0.9
 TitleDivider.BorderSizePixel = 0
 TitleDivider.Position = UDim2.new(0, 0, 1, 0)
-TitleDivider.Size = UDim2.new(1, 59, 0, 1)
+TitleDivider.Size = UDim2.new(1, 8, 0, 1)
 TitleDivider.Parent = TitleBar
 
 -- ============== ИНФОРМАЦИЯ (ВЕРХ) ==============
@@ -125,7 +148,7 @@ InfoDivider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 InfoDivider.BackgroundTransparency = 0.9
 InfoDivider.BorderSizePixel = 0
 InfoDivider.Position = UDim2.new(0, 0, 1, 0)
-InfoDivider.Size = UDim2.new(1, 59, 0, 1)
+InfoDivider.Size = UDim2.new(1, 8, 0, 1)
 InfoDivider.Parent = Info
 
 local InfoHolder = Instance.new("Frame")
@@ -183,8 +206,8 @@ TitleLayout.Parent = TitleFrame
 local Topbar = Instance.new("Frame")
 Topbar.Name = "Topbar"
 Topbar.BackgroundTransparency = 1
-Topbar.Position = UDim2.new(0, 220, 0, 0)
-Topbar.Size = UDim2.new(1, -160, 0, 50)
+Topbar.Position = UDim2.new(0, sidebarWidth + 10, 0, 0)
+Topbar.Size = UDim2.new(1, -(sidebarWidth + 20), 0, 50)
 Topbar.Parent = MainFrame
 
 local TopbarDivider = Instance.new("Frame")
@@ -213,8 +236,8 @@ CurrentTabText.Parent = Topbar
 -- ============== КОНТЕНТ ==============
 local Content = Instance.new("Frame")
 Content.BackgroundTransparency = 1
-Content.Position = UDim2.new(0, 220, 0, 50)
-Content.Size = UDim2.new(1, -220, 1, -50)
+Content.Position = UDim2.new(0, sidebarWidth + 10, 0, 50)
+Content.Size = UDim2.new(1, -(sidebarWidth + 20), 1, -50)
 Content.Parent = MainFrame
 
 -- ============== ВКЛАДКИ ==============
@@ -240,7 +263,7 @@ local tabList = {
 
 local function CreateTab(name)
 	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(1, 53.5, 0, 40)
+	btn.Size = UDim2.new(1, 0, 0, 40)
 	btn.BackgroundTransparency = 1
 	btn.Text = ""
 	btn.AutoButtonColor = false
@@ -299,8 +322,8 @@ for i, tabData in ipairs(tabList) do
 	local group = tabData.group
 	if group ~= currentGroup and i > 1 then
 		local sep = Instance.new("Frame")
-		sep.Size = UDim2.new(1, 59, 0, 1)
-		sep.Position = UDim2.new(0.001, 0, 0, yPos)
+		sep.Size = UDim2.new(1, 5, 0, 1)
+		sep.Position = UDim2.new(0.02, 0, 0, yPos)
 		sep.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		sep.BackgroundTransparency = 0.9
 		sep.BorderSizePixel = 0
@@ -346,14 +369,12 @@ CurrentTabText.Text = "Main"
 -- ============== КОМПОНЕНТЫ UI ==============
 local pages = {}
 
--- реестр для поиска
 local searchRegistry = {}
 local searchCards = {}
 local function registerSearchable(holder, text)
 	table.insert(searchRegistry, { holder = holder, text = string.lower(text or "") })
 end
 
--- ============== ТЕМА / АКЦЕНТНЫЙ ЦВЕТ ==============
 local Theme = {
 	Accent = Color3.fromRGB(252, 190, 57),
 	AccentHover = Color3.fromRGB(255, 205, 90),
@@ -374,8 +395,7 @@ function Theme.set(color)
 end
 Theme.onChange(function() MinBtn.BackgroundColor3 = Theme.Accent end)
 
--- ============== СИСТЕМА КОНФИГОВ (ядро) ==============
-local HttpService = game:GetService("HttpService")
+-- ============== СИСТЕМА КОНФИГОВ ==============
 local Cfg = { Flags = {}, Defaults = {} }
 Cfg.FOLDER = "EtherealBeta"
 Cfg.CONFIG_FOLDER = "EtherealBeta/configs"
@@ -638,7 +658,6 @@ local function CreateToggle(parent, text, default, callback, fitText)
 	return api
 end
 
--- общий обработчик ввода для всех слайдеров (один на всё меню вместо отдельного на каждый — меньше нагрузка при движении мыши)
 local activeSliderUpdate = nil
 UserInputService.InputChanged:Connect(function(input)
 	if activeSliderUpdate and input.UserInputType == Enum.UserInputType.MouseMovement then
@@ -1228,7 +1247,6 @@ end
 local leftCol = CreateColumn(1)
 local rightCol = CreateColumn(2)
 
--- ===== ЛЕВАЯ КОЛОНКА =====
 local AutoSellFrame = CreateCard(leftCol, "Auto Sell")
 CreateToggle(AutoSellFrame, "Enable Auto Sell", false, function(on) AutoSell.Enabled = on end)
 CreateSlider(AutoSellFrame, "Auto Sell Delay", 1, 30, 5, "s", function(v) AutoSell.Delay = v end)
@@ -1248,13 +1266,11 @@ local ChancesCard = CreateCard(leftCol, "Chances")
 CreateToggle(ChancesCard, "Use Spawn Chance", false, function(on) PriceFilters.UseSpawnChance = on end, true)
 CreateSlider(ChancesCard, "Max Spawn Chance (%)", 0, 100, 50, "", function(v) PriceFilters.MaxSpawnChance = v end)
 
--- ===== ПРАВАЯ КОЛОНКА =====
 local ItemsESPFrame = CreateCard(rightCol, "Items ESP")
 CreateToggle(ItemsESPFrame, "ESP Enabled", false, function(on) ItemsESP.Enabled = on end)
 CreateSlider(ItemsESPFrame, "Distance", 0, 400, 150, "", function(v) ItemsESP.Distance = v end)
 
 local RarityCard = CreateCard(rightCol, "Rarity Filters")
--- ТОЛЬКО РЕДКОСТИ ОТ EPIC И ВЫШЕ (Common, Uncommon, Rare УБРАНЫ)
 local rarityFilters = {"Epic", "Legendary", "Exclusive", "Mythic"}
 for _, r in ipairs(rarityFilters) do
 	CreateToggle(RarityCard, r, false, function(on) PriceFilters.Rarity[r] = on end)
@@ -1684,7 +1700,7 @@ UserDivider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 UserDivider.BackgroundTransparency = 0.9
 UserDivider.BorderSizePixel = 0
 UserDivider.Position = UDim2.new(0, -20, 0, -20)
-UserDivider.Size = UDim2.new(1, 93, 0, 1)
+UserDivider.Size = UDim2.new(1, 42, 0, 1)
 UserDivider.Parent = UserInfo
 
 local UserPad = Instance.new("UIPadding")
@@ -1763,7 +1779,7 @@ task.spawn(function()
 	end
 end)
 
--- ============== SETTINGS (КАСТОМИЗАЦИЯ + PROTECT NAME) ==============
+-- ============== SETTINGS ==============
 do
 	local SettingsPage = pages["Settings"]
 
@@ -1831,7 +1847,8 @@ do
 		end
 	end)
 end
--- ============== ОСТРОВОК (СВЁРНУТОЕ МЕНЮ) ==============
+
+-- ============== ОСТРОВОК ==============
 local Island = Instance.new("Frame")
 Island.Name = "Island"
 Island.AnchorPoint = Vector2.new(0.5, 0)
@@ -1930,7 +1947,7 @@ end
 makeDraggable(MainFrame, TitleBar)
 makeDraggable(Island, IslandTitle)
 
--- ============== АНИМАЦИИ СВОРАЧИВАНИЯ ==============
+-- ============== АНИМАЦИИ ==============
 local ISLAND_SHOWN = UDim2.new(0.5, 0, 0, 8)
 local ISLAND_HIDDEN = UDim2.new(0.5, 0, 0, -80)
 local tweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
@@ -1983,7 +2000,6 @@ local function restore()
 	end)
 end
 
--- ============== КНОПКИ ==============
 MinBtn.MouseButton1Click:Connect(minimize)
 IslandBtn.MouseButton1Click:Connect(restore)
 
@@ -2002,7 +2018,6 @@ local function hoverDot(btn, normal, hover)
 end
 hoverDot(ExitBtn, Color3.fromRGB(250, 93, 86), Color3.fromRGB(255, 120, 113))
 
--- ============== ХОТКЕЙ (RightShift) ==============
 UserInputService.InputBegan:Connect(function(input, gpe)
 	if gpe then return end
 	if not unlocked then return end
@@ -2017,8 +2032,9 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 		end
 	end
 end)
+
 -- ====================================================================
--- ФУНКЦИОНАЛ (ENGINE) — читает состояние из таблиц UI через CONFIG
+-- ФУНКЦИОНАЛ (ENGINE)
 -- ====================================================================
 do
 	local RunService = game:GetService("RunService")
@@ -2120,12 +2136,13 @@ do
 		Exclusive = Color3.fromRGB(255, 235, 170),
 		Mythic = Color3.fromRGB(250, 30, 30),
 	}
+	
 	local ECONOMY_COLORS = {
 		safe = Color3.fromRGB(110, 210, 110),
 		normal = Color3.fromRGB(110, 210, 255),
 		risky = Color3.fromRGB(255, 160, 60),
 		trap = Color3.fromRGB(250, 90, 90),
-		jackpot = Color3.fromRGB(255, 220, 20),
+		jackpot = Color3.fromRGB(255, 0, 0),
 	}
 
 	local function getHRP()
@@ -2146,6 +2163,7 @@ do
 		if string.find(name, "ShopZone") == 1 then return true end
 		return false
 	end
+	
 	local function applyPotatoMode()
 		pcall(function()
 			if PotatoModeActive then return end
@@ -2190,6 +2208,7 @@ do
 			PotatoModeActive = true
 		end)
 	end
+	
 	workspace.DescendantAdded:Connect(function(obj)
 		if CONFIG.PotatoMode then
 			task.wait(0.1)
@@ -2215,7 +2234,6 @@ do
 		return nil
 	end
 
-	-- HTTP с кэшем в файл (6 часов): не качаем базы заново при каждом запуске = быстрее старт
 	local function cachedHttpGet(cachePath, url)
 		local hasFS = (writefile and readfile and isfile and isfolder and makefolder) and true or false
 		if hasFS then
@@ -2246,10 +2264,10 @@ do
 	local NameMap = {}
 	local CachedItems = {}
 	local ESPReady = false
+	
 	local function FetchDatabases()
 		local MAIN_DB_URL = "https://raw.githubusercontent.com/awaky1337/base/refs/heads/main/database.lua"
 		local ACCS_URL = "https://raw.githubusercontent.com/awaky1337/base/refs/heads/main/accs_db"
-		-- грузим обе базы параллельно + кэшируем (раньше было два запроса подряд = долгий фриз на старте)
 		local mainRaw, accsRaw
 		local mainDone, accsDone = false, false
 		task.spawn(function() mainRaw = cachedHttpGet("VeryEZ/db_main.cache", MAIN_DB_URL) mainDone = true end)
@@ -2317,6 +2335,7 @@ do
 	local function pColor(rarity)
 		return RARITY_COLORS[rarity] or Color3.fromRGB(255, 255, 255)
 	end
+	
 	local function fmtPrice(price, spawnChance, economyProfile)
 		local priceStr = tostring(math.floor(price)):reverse():gsub("(%d%d%d)", "%1 "):reverse():gsub("^ ", "")
 		local typeStr = ""
@@ -2330,6 +2349,7 @@ do
 		end
 		return '<font size="13"><b>$' .. priceStr .. '</b></font>' .. typeStr
 	end
+	
 	local function getObjPosition(obj, posType)
 		if posType == 1 then return obj.Position
 		elseif posType == 2 then
@@ -2359,6 +2379,7 @@ do
 		hl.Parent = hlFolder
 		table.insert(HighlightPool, hl)
 	end
+	
 	local function AddItemToCache(obj)
 		pcall(function()
 			if not obj then return end
@@ -2419,12 +2440,10 @@ do
 			end
 			if not detectedItem then return end
 			
-			-- ===== ФИЛЬТР РЕДКОСТЕЙ: НЕ РЕНДЕРИМ COMMON, UNCOMMON, RARE =====
 			local rarity = detectedItem.rarity or "Common"
 			if rarity == "Common" or rarity == "Uncommon" or rarity == "Rare" then
 				return
 			end
-			-- ================================================================
 			
 			local posType = 0
 			local position = nil
@@ -2518,7 +2537,6 @@ do
 				end
 			end
 		end
-		-- скан с бюджетом по времени (~4мс на кадр) — старт без рывков
 		local scanClock = os.clock()
 		for i, obj in ipairs(toScan) do
 			AddItemToCache(obj)
@@ -2537,7 +2555,6 @@ do
 		for _, hl in ipairs(HighlightPool) do hl.Enabled = visible end
 	end
 
-	-- кэш градиентов по цвету: не создаём новый ColorSequence каждый кадр для каждого предмета
 	local gradientCache = {}
 	local function getGradientSeq(col)
 		local key = string.format("%d_%d_%d", math.floor(col.R * 255 + 0.5), math.floor(col.G * 255 + 0.5), math.floor(col.B * 255 + 0.5))
@@ -2552,7 +2569,7 @@ do
 		end
 		return seq
 	end
-	-- ESP считается ~20 раз/сек, а не каждый кадр (предметы статичны — на глаз не видно, но фпс выше)
+	
 	local espAccum = 0
 	RunService.RenderStepped:Connect(function(dt)
 		espAccum = espAccum + (dt or 0)
@@ -2643,6 +2660,7 @@ do
 			end
 		end)
 	end)
+	
 	local function enableTransparentGlass()
 		RemovedGlassObjects = {}
 		for _, obj in ipairs(workspace:GetDescendants()) do
@@ -2664,6 +2682,7 @@ do
 			end)
 		end
 	end
+	
 	local function disableTransparentGlass()
 		for _, data in ipairs(RemovedGlassObjects) do
 			pcall(function()
@@ -2722,10 +2741,12 @@ do
 		local nameLbl = bb:FindFirstChild("NameText", true)
 		return bb, nameLbl
 	end
+	
 	local function getRainbowColor()
 		local hue = (tick() % 5) / 5
 		return Color3.fromHSV(hue, 1, 1)
 	end
+	
 	local function applyNickname()
 		local bb, nameLbl = getNameTag()
 		if not bb or not nameLbl then return end
@@ -2784,6 +2805,7 @@ do
 			nameLbl.Position = originalNamePos
 		end
 	end
+	
 	local function revertNickname()
 		local bb, nameLbl = getNameTag()
 		if nameLbl and originalNameText ~= nil then
@@ -2863,6 +2885,7 @@ do
 			if ConfirmBarigaSale then ConfirmBarigaSale:FireServer(false) end
 		end
 	end
+	
 	task.spawn(function()
 		while true do
 			if CONFIG.AutoSell_Enabled then autoSell() end
@@ -2896,6 +2919,7 @@ do
 		end
 		return true
 	end
+	
 	local function toggleInstantTake(enabled)
 		CONFIG.InstantTake = enabled
 		if enabled then
@@ -2905,7 +2929,6 @@ do
 		end
 	end
 
-	-- ---- МОСТ: UI -> движок ----
 	local function syncConfig()
 		CONFIG.Enabled = ItemsESP.Enabled
 		CONFIG.Range = ItemsESP.Distance
@@ -2965,13 +2988,11 @@ do
 		INF_JUMP_ENABLED = Movement.InfinityJump
 	end
 
-	-- ---- реакция на изменения ----
 	local prevGlass = false
 	local prevSky = WorldVisuals.Skybox
 	local prevPotato = false
 	local prevInstant = false
 
-	-- синхронизация UI->движок теперь ~10 раз/сек, а не каждый кадр (это был главный источник лагов)
 	local syncAccum = 0
 	RunService.Heartbeat:Connect(function(dt)
 		syncAccum = syncAccum + (dt or 0)
@@ -3031,16 +3052,15 @@ do
 	end)
 end
 
--- ============== KEY SYSTEM (ввод ключа) ==============
+-- ============== KEY SYSTEM ==============
 do
 	local CORRECT_KEY = "UPDATING"
 	local KEY_FOLDER = "VeryEZ"
 	local KEY_FILE = "VeryEZ/key.json"
-	local KEY_TTL = 24 * 60 * 60 -- 24 часа
+	local KEY_TTL = 24 * 60 * 60
 	local DISCORD_INVITE = "https://discord.gg/tCdbzsQsK"
 	local hasFS = (writefile and readfile and isfile) and true or false
 
-	-- прячем меню до ввода ключа
 	MainFrame.Visible = false
 	Background.Visible = false
 	Blur.Enabled = false
@@ -3076,7 +3096,6 @@ do
 		TweenService:Create(MainFrame, ti, {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 	end
 
-	-- если ключ уже введён за последние 24 часа — не спрашиваем заново
 	if hasValidKey() then
 		revealMenu()
 	else
