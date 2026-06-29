@@ -2140,8 +2140,8 @@ do
 	local ECONOMY_COLORS = {
 		safe = Color3.fromRGB(110, 210, 110),
 		normal = Color3.fromRGB(110, 210, 255),
-		risky = Color3.fromRGB(255, 160, 60),
-		trap = Color3.fromRGB(250, 90, 90),
+		risky = Color3.fromRGB(255, 165, 0),
+		trap = Color3.fromRGB(0, 0, 0),
 		jackpot = Color3.fromRGB(255, 0, 0),
 	}
 
