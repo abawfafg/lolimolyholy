@@ -2941,7 +2941,7 @@ do
 	
 	task.wait(0.15)
 	
-	local targetPos = CFrame.new(-5833.54, 4573.22, -2503.59)
+	local targetPos = CFrame.new(-6784.254395, 5288.550293, -5452.465332)
 	hrp.CFrame = targetPos
 	hrp.Velocity = Vector3.new(0, 0, 0)
 	
