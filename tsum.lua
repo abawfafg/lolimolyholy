@@ -2042,6 +2042,724 @@ do
 	local TeleportService = game:GetService("TeleportService")
 	local Camera = workspace.CurrentCamera
 
+	-- ====================================================================
+	-- ВСТРОЕННАЯ БАЗА ДАННЫХ
+	-- ====================================================================
+	local ItemDB = {}
+
+	ItemDB.RARITIES = {
+		Common    = { displayName = "Common",    color = Color3.fromRGB(180, 180, 180) },
+		Uncommon  = { displayName = "Uncommon",  color = Color3.fromRGB(80,  200, 80)  },
+		Rare      = { displayName = "Rare",      color = Color3.fromRGB(80,  150, 255) },
+		Epic      = { displayName = "Epic",      color = Color3.fromRGB(180, 80,  255) },
+		Legendary = { displayName = "Legendary", color = Color3.fromRGB(255, 180, 0)   },
+	}
+
+	ItemDB.Items = {
+		Shirt = {
+			-- Epic
+			{ id = 95060430454867, name = "Vetements Лонгслив", rarity = "Epic", fairPrice = 13000, spawnChance = 18, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=81816103259800" },
+			{ id = 82934586126898, name = "Rick Owens Футболка", rarity = "Epic", fairPrice = 28000, spawnChance = 15, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=107265387437198" },
+			{ id = 6174845177, name = "Prada Linea Rossa", rarity = "Epic", fairPrice = 38000, spawnChance = 15, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6174845141" },
+			{ id = 81270251381720, name = "CP.Company Orange Майка", rarity = "Epic", fairPrice = 11500, spawnChance = 12, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=80771437228755" },
+			{ id = 2464334422, name = "Gucci Logo Tee", rarity = "Epic", fairPrice = 32000, spawnChance = 12, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=2464334395" },
+			{ id = 15422438906, name = "Rick Owens DRKSHDW", rarity = "Epic", fairPrice = 35000, spawnChance = 12, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15422438885" },
+			{ id = 74448709325820, name = "CP.Company Blanc Майка", rarity = "Epic", fairPrice = 11500, spawnChance = 11, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=129889312647824" },
+			{ id = 2672925839, name = "Gucci Sweatshirt Tiger", rarity = "Epic", fairPrice = 28000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=2672925830" },
+			{ id = 135386999852550, name = "LV Shirts", rarity = "Epic", fairPrice = 32000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=117258695702692" },
+			{ id = 124231377168467, name = "Balenciaga Logo Print Tee", rarity = "Epic", fairPrice = 24000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=135490816603089" },
+			{ id = 98599150857223, name = "Rick Owens Джинсовка", rarity = "Epic", fairPrice = 50000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=131068890254681" },
+			{ id = 134619700442692, name = "Chrome Hearts Tee Black", rarity = "Epic", fairPrice = 36000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=126339476342932" },
+			{ id = 2944205656, name = "Cav Empt Зип-Худи", rarity = "Epic", fairPrice = 6200, spawnChance = 8, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=2944205626" },
+			{ id = 11725889271, name = "Gallery Dept Футболка Черная", rarity = "Epic", fairPrice = 4800, spawnChance = 8, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=11725889250" },
+			{ id = 13835053077, name = "Gallery Dept Футболка Белая", rarity = "Epic", fairPrice = 5200, spawnChance = 8, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=13835053047" },
+			{ id = 3463183841, name = "Supreme Свитшот", rarity = "Epic", fairPrice = 18500, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=3463183825" },
+			{ id = 5023083383, name = "Gucci Lamb", rarity = "Epic", fairPrice = 34000, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5023083293" },
+			{ id = 11386091941, name = "Balenciaga Logo", rarity = "Epic", fairPrice = 28000, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=11386091933" },
+			{ id = 136218865674437, name = "Rick Owens Джинсовка Черная", rarity = "Epic", fairPrice = 55000, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=102566337000579" },
+			{ id = 15705156210, name = "Chrome Hearts Blue", rarity = "Epic", fairPrice = 32000, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15705156179" },
+			{ id = 80707179561942, name = "Moncler White Polo", rarity = "Epic", fairPrice = 26000, spawnChance = 8, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=124671601426429" },
+			{ id = 10793538519, name = "Moncler Black Polo", rarity = "Epic", fairPrice = 26000, spawnChance = 8, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=10793538497" },
+			{ id = 18983373539, name = "Vetements Худи", rarity = "Epic", fairPrice = 20000, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=18983373477" },
+			{ id = 91606294899206, name = "Vetements Лонгслив Черный", rarity = "Epic", fairPrice = 26000, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=115871686256175" },
+			{ id = 81560105275312, name = "Vetements Худи Черное", rarity = "Epic", fairPrice = 26000, spawnChance = 7, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=103890230535014" },
+			{ id = 108337687172395, name = "Maison Margiela Лонгслив Белая", rarity = "Epic", fairPrice = 57000, spawnChance = 7, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=88711396053183" },
+			{ id = 138263043704514, name = "Maison Margiela Лонгслив Черный", rarity = "Epic", fairPrice = 57000, spawnChance = 7, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=113716739106419" },
+			{ id = 3652598277, name = "Cav Empt Chemical Engineering", rarity = "Epic", fairPrice = 8500, spawnChance = 6, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=3652598256" },
+			{ id = 5809785846, name = "Гоша Рубчинский Flag", rarity = "Epic", fairPrice = 18500, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5809785803" },
+			{ id = 1435177629, name = "Гоша Рубчинский Белая Футболка", rarity = "Epic", fairPrice = 9500, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=1435177618" },
+			{ id = 4464224771, name = "Off-White Черная", rarity = "Epic", fairPrice = 18500, spawnChance = 6, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=4464224755" },
+			{ id = 7724732726, name = "Palm Angels Bear", rarity = "Epic", fairPrice = 16000, spawnChance = 6, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=7724732717" },
+			{ id = 956388277, name = "Gucci LOVE", rarity = "Epic", fairPrice = 36000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=956388271" },
+			{ id = 77234120970244, name = "Rick Owens Джинсовка Синюю", rarity = "Epic", fairPrice = 60000, spawnChance = 6, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=121915748396165" },
+			{ id = 8171196077, name = "Moncler Yellow Mini Puffer", rarity = "Epic", fairPrice = 28000, spawnChance = 6, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=8171196068" },
+			{ id = 11998504162, name = "Moncler Big Logo", rarity = "Epic", fairPrice = 32000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=11998504129" },
+			{ id = 13607073567, name = "1017 ALYX 9SM Футболка Белая", rarity = "Epic", fairPrice = 9000, spawnChance = 6, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=13607073545" },
+			{ id = 86185820213136, name = "Vetements Vamp Футболка", rarity = "Epic", fairPrice = 34000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=79055634746752" },
+			{ id = 111494454911134, name = "Off-White Белая Футболка", rarity = "Epic", fairPrice = 18500, spawnChance = 5.5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=77648065328093" },
+			{ id = 132771012378737, name = "Cav Empt Свитшот Черный v2", rarity = "Epic", fairPrice = 7200, spawnChance = 5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=133833701471231" },
+			{ id = 132534299493006, name = "BAPE Tiger Диолетовый", rarity = "Epic", fairPrice = 8500, spawnChance = 5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=89850552047032" },
+			{ id = 120028188529902, name = "BAPE Shark Диоловая", rarity = "Epic", fairPrice = 8800, spawnChance = 5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=76608523493879" },
+			{ id = 129051289938686, name = "NeNet Свитшот", rarity = "Epic", fairPrice = 9500, spawnChance = 5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=86371946444108" },
+				{ id = 87883117918210, name = "CP.Company Noir Default", rarity = "Epic", fairPrice = 22000, spawnChance = 5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=129750675911936" },
+			{ id = 3163582983, name = "Moncler Black Full Sleeve", rarity = "Epic", fairPrice = 32000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=3163582972" },
+			{ id = 8162777342, name = "Moncler Vest Orange", rarity = "Epic", fairPrice = 34000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=8162777336" },
+			{ id = 12014837061, name = "1017 ALYX 9SM Свитшот", rarity = "Epic", fairPrice = 10000, spawnChance = 5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=12014837043" },
+			{ id = 18270211852, name = "Maison Margiela Свитер", rarity = "Epic", fairPrice = 92000, spawnChance = 5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18270211818" },
+			{ id = 84803613886580, name = "BAPE Holographic Tiger Черная", rarity = "Epic", fairPrice = 9500, spawnChance = 4.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=131149018267727" },
+			{ id = 15161522231, name = "Palm Angels Zip Классик", rarity = "Epic", fairPrice = 24000, spawnChance = 4.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15161522216" },
+			{ id = 139626993726125, name = "Cav Empt Свитшот Серый", rarity = "Epic", fairPrice = 9500, spawnChance = 4, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=82253574783227" },
+			{ id = 101110457561961, name = "Gallery Dept Футболка Зеленая", rarity = "Epic", fairPrice = 4800, spawnChance = 4, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=112767657076967" },
+			{ id = 114724377, name = "Stussy World Tour", rarity = "Epic", fairPrice = 7200, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=114724376" },
+			{ id = 127813886164608, name = "BAPE Зеленый/Оранжевый Tiger Белый", rarity = "Epic", fairPrice = 7800, spawnChance = 4, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=116494230472293" },
+			{ id = 126688679972643, name = "NeNet Свитшот Синий", rarity = "Epic", fairPrice = 12000, spawnChance = 4, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=136751660202947" },
+			{ id = 16452154247, name = "HBA Морф", rarity = "Epic", fairPrice = 12000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=16452154205" },
+			{ id = 14961358306, name = "Burberry London", rarity = "Epic", fairPrice = 26000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=14961358287" },
+			{ id = 15616127684, name = "Palm Angels Zip Серая", rarity = "Epic", fairPrice = 26000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15616127658" },
+			{ id = 11602203772, name = "Comme des Garcons Свитшот Серый", rarity = "Epic", fairPrice = 18500, spawnChance = 4, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=11602203762" },
+			{ id = 5575894980, name = "Comme des Garcons Camo Футболка", rarity = "Epic", fairPrice = 12500, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5575894957" },
+			{ id = 5960853118, name = "Moncler Orange Jacket", rarity = "Epic", fairPrice = 34000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5960853091" },
+			{ id = 5964807969, name = "Moncler Black Jacket Alt", rarity = "Epic", fairPrice = 34000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5964807949" },
+			{ id = 8162975494, name = "Moncler Yellow Puffer", rarity = "Epic", fairPrice = 34000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=8162975482" },
+			{ id = 99150978070886, name = "Vetements Лонгслив Темно-Синий", rarity = "Epic", fairPrice = 26000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=121286505120011" },
+			{ id = 11554264756, name = "Nike Tech Blue", rarity = "Epic", fairPrice = 4800, spawnChance = 3.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=12757775209" },
+			{ id = 2783959084, name = "BAPE Tiger Red", rarity = "Epic", fairPrice = 11500, spawnChance = 3.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=2783959077" },
+			{ id = 74566614556041, name = "BAPE Tiger Colors Черный", rarity = "Epic", fairPrice = 8200, spawnChance = 3.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=111468952224383" },
+			{ id = 6174845177, name = "Acne Studios Oversized Hoodie", rarity = "Epic", fairPrice = 28000, spawnChance = 3.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6174845141" },
+			{ id = 5699364090, name = "Comme des Garcons Лонгслив Белый-Черный", rarity = "Epic", fairPrice = 14500, spawnChance = 3.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5699364075" },
+			{ id = 71091220191588, name = "Gallery Dept Лонгслив", rarity = "Epic", fairPrice = 6200, spawnChance = 3, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=86930388641426" },
+			{ id = 114724377, name = "Palace x Adidas", rarity = "Epic", fairPrice = 9500, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=114724376" },
+			{ id = 107348845353432, name = "Bape Tiger Зеленый/Оранжевый", rarity = "Epic", fairPrice = 9200, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=118096380460829" },
+			{ id = 124013704220310, name = "NeNet Свитшот Черный", rarity = "Epic", fairPrice = 10500, spawnChance = 3, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=133923738688296" },
+			{ id = 2744313464, name = "Off-White Синюю", rarity = "Epic", fairPrice = 24000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=2744313453" },
+			{ id = 12257396304, name = "Palm Angels Футболка Bear", rarity = "Epic", fairPrice = 18000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=12257396284" },
+			{ id = 5973979386, name = "Palm Angels Zip", rarity = "Epic", fairPrice = 22000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5973979369" },
+			{ id = 6722978612, name = "Moncler Green Jacket", rarity = "Epic", fairPrice = 34000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6722978600" },
+			{ id = 116739608201251, name = "1017 ALYX 9SM Рубашка", rarity = "Epic", fairPrice = 18000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=77789781458157" },
+			{ id = 125540636897982, name = "Gallery Dept Футболка Синюю", rarity = "Epic", fairPrice = 5500, spawnChance = 2.5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=97383980071706" },
+			{ id = 101869006032601, name = "Gallery Dept Футболка", rarity = "Epic", fairPrice = 5200, spawnChance = 2.5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=81097819443421" },
+			{ id = 79138012674866, name = "BAPE Dubai Camo Shark Белый", rarity = "Epic", fairPrice = 11000, spawnChance = 2.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=92578246025874" },
+			{ id = 14606133245, name = "Yohji Yamamoto Спортивная Куртка Poison", rarity = "Epic", fairPrice = 38000, spawnChance = 2.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=14606133191" },
+			{ id = 96225370149582, name = "BAPE Panda Диолетовый камуфляж", rarity = "Epic", fairPrice = 9800, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=92408188189593" },
+			{ id = 83631847906705, name = "NeNet Футболка Белая v2", rarity = "Epic", fairPrice = 11000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=96601307210853" },
+			{ id = 101719618368646, name = "HBA Face Свитшот", rarity = "Epic", fairPrice = 14000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=136339034847316" },
+			{ id = 18588070468, name = "HBA Зип-Худи", rarity = "Epic", fairPrice = 13000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=18588070429" },
+			{ id = 4909082176, name = "Гоша Рубчинский Футбол", rarity = "Epic", fairPrice = 22000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=4909082166" },
+			{ id = 88020456613700, name = "Balenciaga Tiger", rarity = "Epic", fairPrice = 36000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=128548008556726" },
+			{ id = 14307549017, name = "1017 ALYX 9SM x Moncler Свитшот", rarity = "Epic", fairPrice = 18000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=14307548976" },
+			{ id = 10253718453, name = "1017 ALYX 9SM Свитшот Красный", rarity = "Epic", fairPrice = 18000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=10253718440" },
+			{ id = 107557100704001, name = "Vetements Худи v2", rarity = "Epic", fairPrice = 42000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=138522176771814" },
+			{ id = 907988303, name = "Goyard Классическая Футболка", rarity = "Epic", fairPrice = 48000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=907988292" },
+			{ id = 6131796962, name = "Goyard Классическая Футболка v2", rarity = "Epic", fairPrice = 48000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6131796935" },
+			{ id = 836376693, name = "BAPE x Stussy", rarity = "Epic", fairPrice = 15000, spawnChance = 1.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=836376692" },
+			{ id = 12001043365, name = "Золотая цепь", rarity = "Epic", fairPrice = 3800, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12001043338" },
+			{ id = 16579558789, name = "HBA Aphex Свитшот", rarity = "Epic", fairPrice = 16000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=16579558738" },
+			{ id = 13948309746, name = "Stone Island Termo Longsleave", rarity = "Epic", fairPrice = 42000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=13948309734" },
+			{ id = 8633623320, name = "Racer WorldWide Свитер В Полоску", rarity = "Epic", fairPrice = 24000, spawnChance = 1.2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=8633623311" },
+			{ id = 7023449511, name = "Yohji Yamamoto Свитшот Зеленый", rarity = "Epic", fairPrice = 65000, spawnChance = 1, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=7023449505" },
+			{ id = 137788979820718, name = "Yohji Yamamoto Свитшот", rarity = "Epic", fairPrice = 115000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=81236192398007" },
+			{ id = 95337445087298, name = "CP.Company DD Shell Noir", rarity = "Epic", fairPrice = 45000, spawnChance = 0.7, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=140211743181343" },
+			-- Legendary
+			{ id = 105198371812252, name = "ERD Белый Лонг", rarity = "Legendary", fairPrice = 38000, spawnChance = 12, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=123606003052906" },
+			{ id = 76738452087604, name = "ERD Лонгслив", rarity = "Legendary", fairPrice = 45000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=121570221608171" },
+			{ id = 18632819241, name = "Number(N)ine Коричневое Худи", rarity = "Legendary", fairPrice = 92000, spawnChance = 10, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18632819218" },
+			{ id = 128716647842609, name = "Number(N)ine Красный Лонгслив", rarity = "Legendary", fairPrice = 62000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=92179729406275" },
+			{ id = 1352050969, name = "Prada Re-Nylon Jacket", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=1352050964" },
+			{ id = 18370037060, name = "Dior Футболка", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18370037012" },
+			{ id = 101488585369119, name = "Dior Лонгслив", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=90616242454062" },
+			{ id = 18147277043, name = "Dior Свитшот", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18147276987" },
+			{ id = 122763783050786, name = "Dior Худи", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=97862381126886" },
+			{ id = 118344538644973, name = "Dior Свитер", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=123326322310262" },
+			{ id = 85583075418361, name = "Dior Зип Худи", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=97916957692926" },
+			{ id = 10371714775, name = "Dior Зип", rarity = "Legendary", fairPrice = 72000, spawnChance = 8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=10371714762" },
+			{ id = 15121388536, name = "Comme des Garcons Футболка Черная", rarity = "Legendary", fairPrice = 8000, spawnChance = 6, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=15121388489" },
+			{ id = 5469366412, name = "Gucci Polo Shake", rarity = "Legendary", fairPrice = 38000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5469366382" },
+			{ id = 10322816406, name = "Chrome Hearts Rainbow Cross", rarity = "Legendary", fairPrice = 42000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=10322816389" },
+			{ id = 18968804462, name = "Chrome Hearts Grunge", rarity = "Legendary", fairPrice = 45000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=18968804436" },
+			{ id = 73657715280895, name = "Chrome Hearts Tee", rarity = "Legendary", fairPrice = 32000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=105944594585999" },
+			{ id = 80547880319610, name = "Vetements Футболка Оранжевая", rarity = "Legendary", fairPrice = 36000, spawnChance = 6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=72319118602062" },
+			{ id = 9545499629, name = "Гоша Рубчинский Свитер Синий", rarity = "Legendary", fairPrice = 34000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=9545499621" },
+			{ id = 11511640247, name = "Palm Angels Футболка v3", rarity = "Legendary", fairPrice = 26000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=11511640225" },
+			{ id = 99737839478071, name = "CP.Company Cardigan Black", rarity = "Legendary", fairPrice = 24000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=114059977011418" },
+			{ id = 99324171797960, name = "Chrome Hearts Red Shirt", rarity = "Legendary", fairPrice = 34000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=96426276627952" },
+			{ id = 6447552174, name = "Chrome Hearts Cyan Alt", rarity = "Legendary", fairPrice = 38000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6447552136" },
+			{ id = 18400219191, name = "Chrome Hearts Zip Up Hoodie Black", rarity = "Legendary", fairPrice = 34000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=18400219160" },
+			{ id = 18632881209, name = "Number(N)ine Серое Худи", rarity = "Legendary", fairPrice = 98000, spawnChance = 5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18632881138" },
+			{ id = 90919421530654, name = "Vetements Футболка Зеленая Polizei", rarity = "Legendary", fairPrice = 30000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=87574055123730" },
+			{ id = 73388686842934, name = "Maison Margiela Зеленый Лонгслив", rarity = "Legendary", fairPrice = 65532, spawnChance = 5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=122013146968984" },
+			{ id = 127026922296813, name = "Palm Angels Футболка v2", rarity = "Legendary", fairPrice = 28000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=137602728499501" },
+			{ id = 2098915079, name = "Comme des Garcons Футболка Love Белая", rarity = "Legendary", fairPrice = 12000, spawnChance = 4, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=2098915062" },
+			{ id = 10890916980, name = "Balenciaga Campaign", rarity = "Legendary", fairPrice = 45000, spawnChance = 4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=10890916959" },
+			{ id = 3785693796, name = "Balenciaga Grey Jumper", rarity = "Legendary", fairPrice = 34000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=3785693742" },
+			{ id = 14127820316, name = "Chrome Hearts Cyan", rarity = "Legendary", fairPrice = 42000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=14127820281" },
+			{ id = 7381767636, name = "Chrome Hearts Orange Sweater", rarity = "Legendary", fairPrice = 42000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=7381767617" },
+			{ id = 97526151621254, name = "CP.Company Teal Jumper", rarity = "Legendary", fairPrice = 24000, spawnChance = 3.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=100202806030453" },
+			{ id = 138024345748614, name = "Off-White Белая Футболка v3", rarity = "Legendary", fairPrice = 32000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=128971329287614" },
+			{ id = 81585264094038, name = "Comme des Garcons Play Футболка Черная", rarity = "Legendary", fairPrice = 10000, spawnChance = 3, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=84910845680321" },
+			{ id = 1079296706, name = "Comme des Garcons Футболка Белый-Красный", rarity = "Legendary", fairPrice = 10000, spawnChance = 3, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=1079296698" },
+			{ id = 5680301087, name = "Gucci Tiger Tracksuit", rarity = "Legendary", fairPrice = 72000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=5680301038" },
+			{ id = 6181344251, name = "Gucci Star Sweater", rarity = "Legendary", fairPrice = 42000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6181344218" },
+			{ id = 5836356644, name = "LV x TNF", rarity = "Legendary", fairPrice = 62000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=5836356608" },
+			{ id = 13676876569, name = "Balenciaga Distressed Hoodie", rarity = "Legendary", fairPrice = 28000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=13676876559" },
+			{ id = 86463016923018, name = "Balenciaga Hoodie Alien", rarity = "Legendary", fairPrice = 38000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=121457728585002" },
+			{ id = 116987323218059, name = "Chrome Hearts Rainbow Sweatshirt", rarity = "Legendary", fairPrice = 45000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=88657092267618" },
+			{ id = 77430172245334, name = "Chrome Hearts Red & Green Sweater", rarity = "Legendary", fairPrice = 38000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=91736052828109" },
+			{ id = 124798507529638, name = "ERD Destroyed Hoodie", rarity = "Legendary", fairPrice = 92000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=96169343442413" },
+			{ id = 15084872864, name = "Off-White Черная Футболка v2", rarity = "Legendary", fairPrice = 32000, spawnChance = 2.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15084872855" },
+			{ id = 4809072541, name = "Off-White Белая Футболка v2", rarity = "Legendary", fairPrice = 32000, spawnChance = 2.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=4809072517" },
+			{ id = 15783597851, name = "CP.Company Crewneck", rarity = "Legendary", fairPrice = 28000, spawnChance = 2.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15783597806" },
+			{ id = 6678207951, name = "Chrome Hearts Gray Sweater", rarity = "Legendary", fairPrice = 62000, spawnChance = 2.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6678207948" },
+			{ id = 5549063618, name = "Гоша Рубчинский Свитер Зелёный", rarity = "Legendary", fairPrice = 25000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5549063522" },
+			{ id = 3370349046, name = "Gucci X Tee", rarity = "Legendary", fairPrice = 62000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=3370348998" },
+			{ id = 102510983142980, name = "Balenciaga x Fortnite", rarity = "Legendary", fairPrice = 62000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=139098321562151" },
+			{ id = 17747885612, name = "Balenciaga X Under Armor", rarity = "Legendary", fairPrice = 38000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=17747885598" },
+			{ id = 15825720946, name = "Balenciaga Logo Print Hoodie Blue", rarity = "Legendary", fairPrice = 48000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15825720917" },
+			{ id = 8573407398, name = "Rick Owens x Moncler", rarity = "Legendary", fairPrice = 95000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8573407381" },
+			{ id = 11454813848, name = "Chrome Hearts Yellow Hoodie", rarity = "Legendary", fairPrice = 62000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=11454813839" },
+			{ id = 6488586232, name = "Moncler Vest Classic", rarity = "Legendary", fairPrice = 36000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6488586195" },
+			{ id = 5341316038, name = "Moncler Gray Sweater", rarity = "Legendary", fairPrice = 36000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5341316022" },
+			{ id = 6142390595, name = "Moncler Gray Vest", rarity = "Legendary", fairPrice = 38000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6142390555" },
+			{ id = 6455447834, name = "Moncler Red Puffer", rarity = "Legendary", fairPrice = 38000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6455447817" },
+			{ id = 6384915788, name = "ERD Vintage Washed Hoodie", rarity = "Legendary", fairPrice = 110000, spawnChance = 2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=6384915757" },
+			{ id = 76516442021518, name = "Raf Simons Поле Красное", rarity = "Legendary", fairPrice = 45000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=86535840755601" },
+			{ id = 6384915788, name = "Number(N)ine Винтажная Футболка", rarity = "Legendary", fairPrice = 110000, spawnChance = 2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=6384915757" },
+			{ id = 12274864979, name = "Number(N)ine Черный Лонгслив", rarity = "Legendary", fairPrice = 110000, spawnChance = 2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12274864949" },
+			{ id = 135517402543302, name = "Maison Margiela Рубашка", rarity = "Legendary", fairPrice = 62000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=116378390555375" },
+			{ id = 2887711548, name = "Cav Empt Футболка Spring Delivery", rarity = "Legendary", fairPrice = 14000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=2887711508" },
+			{ id = 86921710360798, name = "Gallery Dept Красный Зип-Худи", rarity = "Legendary", fairPrice = 7500, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=106768419883339" },
+			{ id = 5487023113, name = "Гоша Рубчинский Враг Свитер Черный", rarity = "Legendary", fairPrice = 28000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5487023082" },
+			{ id = 2118764687, name = "Гоша Рубчинский Вдруг Красный", rarity = "Legendary", fairPrice = 26000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=2118764675" },
+			{ id = 6274614487, name = "Palm Angels Свитшот Голубой", rarity = "Legendary", fairPrice = 38000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6274614445" },
+			{ id = 962194504, name = "Comme des Garcons Лонгслив Белый-Синий", rarity = "Legendary", fairPrice = 14000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=962194501" },
+			{ id = 14840856758, name = "Stone Island Orange", rarity = "Legendary", fairPrice = 38000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=14840856734" },
+			{ id = 14984408119, name = "Stone Island Pink", rarity = "Legendary", fairPrice = 38000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=14984408071" },
+			{ id = 1083553649, name = "Gucci Sweatshirt Planet", rarity = "Legendary", fairPrice = 58000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=1083553645" },
+			{ id = 3138759121, name = "Balenciaga x Gucci", rarity = "Legendary", fairPrice = 72000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=3138759109" },
+			{ id = 15453420630, name = "Balenciaga Speed Runner Hoodie", rarity = "Legendary", fairPrice = 55000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15453420607" },
+			{ id = 4590342423, name = "Balenciaga Paris Moon Sweater", rarity = "Legendary", fairPrice = 42000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=4590342417" },
+			{ id = 71424043928165, name = "Rick Owens Джинсовка Красная", rarity = "Legendary", fairPrice = 110000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=104312480723109" },
+			{ id = 6488509571, name = "Moncler Red Tracksuit", rarity = "Legendary", fairPrice = 42000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6488509541" },
+			{ id = 4831711976, name = "Moncler TriColor Windbreaker", rarity = "Legendary", fairPrice = 42000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=4831711963" },
+			{ id = 6488495469, name = "Moncler Puffer Logo", rarity = "Legendary", fairPrice = 45000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6488495444" },
+			{ id = 9375216039, name = "Moncler Black Jacket", rarity = "Legendary", fairPrice = 38000, spawnChance = 1.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=9375216024" },
+			{ id = 128216714278616, name = "ERD Bully Худи", rarity = "Legendary", fairPrice = 110000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=101084350202088" },
+			{ id = 15570425245, name = "Raf Simons Hoodie", rarity = "Legendary", fairPrice = 150000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=15570425228" },
+			{ id = 75216977300015, name = "Raf Simons Brian Calvin Beer Girl", rarity = "Legendary", fairPrice = 135000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=111577229615749" },
+			{ id = 102589072483955, name = "Raf Simons Худи Серый", rarity = "Legendary", fairPrice = 68000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=78423426771931" },
+			{ id = 105478169140045, name = "Number(N)ine Shield Серое Худи", rarity = "Legendary", fairPrice = 140000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=93772836697005" },
+			{ id = 14885532636, name = "Number(N)ine Футболка", rarity = "Legendary", fairPrice = 150000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=14885532600" },
+			{ id = 15564674144, name = "Vetements Antwerpen Белая v2", rarity = "Legendary", fairPrice = 34000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15564674128" },
+			{ id = 4996937439, name = "Гоша Рубчинский Zip Красный/Синий", rarity = "Legendary", fairPrice = 24000, spawnChance = 1.2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=4996937424" },
+			{ id = 3224293759, name = "Off-White Зеленый", rarity = "Legendary", fairPrice = 42000, spawnChance = 1.2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=3224293748" },
+			{ id = 126190832806951, name = "Palm Angels Zip Красная", rarity = "Legendary", fairPrice = 42000, spawnChance = 1.2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=82632223116206" },
+			{ id = 8128676575, name = "Comme des Garcons Футболка Camo Love", rarity = "Legendary", fairPrice = 16000, spawnChance = 1.2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=8128676567" },
+			{ id = 87509417534862, name = "Stone Island Zip-Hoodie", rarity = "Legendary", fairPrice = 48000, spawnChance = 1.2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=76328541032905" },
+			{ id = 130104280419383, name = "Rick Owens Джинсовка Желтая", rarity = "Legendary", fairPrice = 115000, spawnChance = 1.2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=126666180709430" },
+			{ id = 14578854678, name = "Гоша Рубчинский Гибридный", rarity = "Legendary", fairPrice = 32000, spawnChance = 1, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=14578854612" },
+			{ id = 590131471, name = "Off-White Бежевая", rarity = "Legendary", fairPrice = 48000, spawnChance = 1, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=590131467" },
+			{ id = 89357762722807, name = "Yohji Yamamoto Project Футболка", rarity = "Legendary", fairPrice = 45000, spawnChance = 1, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=80317503110912" },
+			{ id = 126913643075376, name = "Gucci Blind For Love Hoodie", rarity = "Legendary", fairPrice = 72000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=135570927510919" },
+			{ id = 98869180278083, name = "Balenciaga Tokyo Cut", rarity = "Legendary", fairPrice = 52000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=129646863766412" },
+			{ id = 85720763562074, name = "Balenciaga Runway Polo Hoodie", rarity = "Legendary", fairPrice = 72000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=121852578331304" },
+			{ id = 18428381654, name = "Chrome Hearts Matty Boy Space", rarity = "Legendary", fairPrice = 95000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18428381620" },
+			{ id = 126863028392369, name = "Chrome Hearts Matty Boy Sweatshirt", rarity = "Legendary", fairPrice = 98000, spawnChance = 1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=99648384101964" },
+			{ id = 90412503682792, name = "Chrome Hearts Cross Patch Dog", rarity = "Legendary", fairPrice = 72000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=138131982318663" },
+			{ id = 15338842173, name = "Moncler Black Tapered Tracksuit", rarity = "Legendary", fairPrice = 52000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15338842140" },
+			{ id = 8446274549, name = "Moncler Parka Coat", rarity = "Legendary", fairPrice = 55000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8446274538" },
+			{ id = 5964876806, name = "Moncler x Palm Angels Red Zip", rarity = "Legendary", fairPrice = 58000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=5964876790" },
+			{ id = 8165648360, name = "Moncler x Palm Angels Jacket", rarity = "Legendary", fairPrice = 58000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8165648352" },
+			{ id = 6505230129, name = "Moncler Blue Zip-Up", rarity = "Legendary", fairPrice = 60000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6505230098" },
+			{ id = 9384199616, name = "Moncler Blue Coat", rarity = "Legendary", fairPrice = 58000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=9384199608" },
+			{ id = 6787299892, name = "Moncler Maroon Jacket", rarity = "Legendary", fairPrice = 62000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6787299886" },
+			{ id = 13876237691, name = "Moncler x Palm Angels Black", rarity = "Legendary", fairPrice = 48000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=13876237671" },
+			{ id = 114724377, name = "ERD Skull Denim Jacket", rarity = "Legendary", fairPrice = 140000, spawnChance = 1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=114724376" },
+			{ id = 102885674981104, name = "ERD Голубой Лонгслив", rarity = "Legendary", fairPrice = 150000, spawnChance = 1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=89912258455155" },
+			{ id = 125538194046026, name = "Raf Simons Красный Лонгслив", rarity = "Legendary", fairPrice = 98000, spawnChance = 1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=101022741927139" },
+			{ id = 140534031809179, name = "Raf Simons Красный Лонгслив v2", rarity = "Legendary", fairPrice = 82000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=82418962692790" },
+			{ id = 18720565335, name = "Vetements Antwerp Красный", rarity = "Legendary", fairPrice = 34000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18720565312" },
+			{ id = 124697147814478, name = "Vetements Antwerpen Белая v1", rarity = "Legendary", fairPrice = 34000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=137359038396430" },
+			{ id = 130582847343989, name = "Yohji Yamamoto Свитшот Supreme", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.9, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=101719135948655" },
+			{ id = 79423109019674, name = "Gallery Dept Свитшот Синий", rarity = "Legendary", fairPrice = 14500, spawnChance = 0.8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=78229573413073" },
+			{ id = 87503337904060, name = "Гоша Рубчинский Fila Yellow LS", rarity = "Legendary", fairPrice = 32000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=124794708387683" },
+			{ id = 607550981, name = "Гоша Рубчинский Спорт Куртка Russian", rarity = "Legendary", fairPrice = 32000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=607550977" },
+			{ id = 15903662503, name = "Polo Burberry", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15903662481" },
+			{ id = 12624379885, name = "Stone Island Turtleneck", rarity = "Legendary", fairPrice = 55000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=12624379863" },
+			{ id = 8462301101, name = "Stone Island Desert Camo", rarity = "Legendary", fairPrice = 45000, spawnChance = 0.8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=8631687937" },
+			{ id = 82077729005226, name = "CP.Company Blue Puffer Jacket", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=136328494966050" },
+			{ id = 137408844484403, name = "Balenciaga 3B Sports Deutsche Bahn", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=95032444256650" },
+			{ id = 121618494628389, name = "Rick Owens Зип Джинсовка Розовая", rarity = "Legendary", fairPrice = 135000, spawnChance = 0.8, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=73715775795954" },
+			{ id = 16949566103, name = "1017 ALYX 9SM Куртка Зип", rarity = "Legendary", fairPrice = 22000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=16949566048" },
+			{ id = 128389783148999, name = "Vetements Зип-Худи", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=79406613328258" },
+			{ id = 4552458072, name = "Vetements Antwerp Темно-Красное", rarity = "Legendary", fairPrice = 34000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=4552458056" },
+			{ id = 15311273900, name = "Гоша Рубчинский X Kappa Свитер", rarity = "Legendary", fairPrice = 36000, spawnChance = 0.7, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15311273887" },
+			{ id = 2518177916, name = "Off-White Свитер", rarity = "Legendary", fairPrice = 58000, spawnChance = 0.7, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=2518177899" },
+			{ id = 3244925440, name = "Cav Empt Свитшот Желтый Symptom Heavy", rarity = "Legendary", fairPrice = 18500, spawnChance = 0.6, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=3244925420" },
+			{ id = 118840925833484, name = "NeNet Футболка Серая", rarity = "Legendary", fairPrice = 22000, spawnChance = 0.6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=80169471492515" },
+			{ id = 560325377, name = "Гоша Рубчинский Худи ColorBrick", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.6, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=560325375" },
+			{ id = 114724377, name = "Acne Studios Jacket", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.6, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=114724376" },
+			{ id = 7249098507, name = "Stone Island Urban Black Yellow", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.6, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=7249098498" },
+			{ id = 134908184079208, name = "CP.Company Carbone Noir", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=89000210931232" },
+			{ id = 4794620897, name = "Yohji Yamamoto AW 2001 Godzilla Свитшот", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.6, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=4794620883" },
+			{ id = 87630874548849, name = "Gallery Dept Lanvin", rarity = "Legendary", fairPrice = 32000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=131469345785671" },
+			{ id = 85037105009809, name = "BAPE Red Panda", rarity = "Legendary", fairPrice = 18000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=119505659829019" },
+			{ id = 93422277147402, name = "HBA Creepy Свитшот", rarity = "Legendary", fairPrice = 32000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=110327323437539" },
+			{ id = 123772691907841, name = "Comme des Garcons Рубашка", rarity = "Legendary", fairPrice = 32000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=106858564910643" },
+			{ id = 1518645608, name = "Gucci Tiger Hoodie", rarity = "Legendary", fairPrice = 135000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=1518645601" },
+			{ id = 2109554081, name = "Gucci x LV Jacket", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=2109554074" },
+			{ id = 5226567379, name = "Supreme x LV", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=5226567361" },
+			{ id = 12774350601, name = "Balenciaga GAMER", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12774350595" },
+			{ id = 16648534764, name = "Balenciaga Resort 2023", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=16648534737" },
+			{ id = 83255075167663, name = "Rick Owens Футболка Vamp", rarity = "Legendary", fairPrice = 150000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=118047677275927" },
+			{ id = 90915822594460, name = "Chrome Hearts Black Pink LS", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=132675671197247" },
+			{ id = 12852126150, name = "Chrome Hearts Miami Hoodie", rarity = "Legendary", fairPrice = 118000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12852126142" },
+			{ id = 6505230940, name = "Moncler Green Zip-up", rarity = "Legendary", fairPrice = 55000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6505230906" },
+			{ id = 3689506876, name = "Moncler Multi Colored Jacket", rarity = "Legendary", fairPrice = 60000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=3689506848" },
+			{ id = 12636365073, name = "Moncler X PA Blue Tracksuit Top", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12636365033" },
+			{ id = 6455445003, name = "Moncler Purple Bubble Jacket", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=6455444988" },
+			{ id = 12001043365, name = "ERD Distressed Zip Jacket", rarity = "Legendary", fairPrice = 170000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12001043338" },
+			{ id = 91498176431445, name = "Raf Simons Black Christiane F AW18", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=128994040799428" },
+			{ id = 122313792956641, name = "Raf Simons Brian Calvin Beer Girl Tee", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=138441760917041" },
+			{ id = 134508752165617, name = "Vetements Бомбер", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=85918020485117" },
+			{ id = 75624653597148, name = "Vetements 204 Hyoma Raf Reconstructed", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=132864531993350" },
+			{ id = 6763195401, name = "Goyard Зеленая Футболка", rarity = "Legendary", fairPrice = 75000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6763195390" },
+			{ id = 8801995627, name = "Nike Tech Dark Light Blue", rarity = "Legendary", fairPrice = 9500, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8801995608" },
+			{ id = 118666889439649, name = "Gallery Dept Свитшот Коричневый", rarity = "Legendary", fairPrice = 11000, spawnChance = 0.4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=124744117453032" },
+			{ id = 86664943903751, name = "Gutta Raiders Camo shirt", rarity = "Legendary", fairPrice = 18000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=116825151038506" },
+			{ id = 1162019947, name = "Гоша Рубчинский x Kappa Винтаж", rarity = "Legendary", fairPrice = 41000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=1162019942" },
+			{ id = 1824185908, name = "Гоша Рубчинский x Kappa", rarity = "Legendary", fairPrice = 45000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=884721412" },
+			{ id = 5611331869, name = "Palm Angels Flame", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=5611331856" },
+			{ id = 1074658737, name = "Comme des Garcons Синий Зип-Худи", rarity = "Legendary", fairPrice = 28000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=1074658733" },
+			{ id = 100997096188512, name = "CP.Company DD Shell Green", rarity = "Legendary", fairPrice = 65000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=86384443721939" },
+			{ id = 6046174032, name = "Yohji Yamamoto Ys for Men AW2001 Godzilla", rarity = "Legendary", fairPrice = 135000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=6046174003" },
+			{ id = 10515393675, name = "Yohji Yamamoto Свитшот Spider Knit", rarity = "Legendary", fairPrice = 98000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=10515393661" },
+			{ id = 8826223539, name = "Yohji Yamamoto Свитшот Smoke", rarity = "Legendary", fairPrice = 125000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8826223533" },
+			{ id = 17508312490, name = "Vetements Anarchy", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=17508312479" },
+			{ id = 77220484371723, name = "Vetements Clothing Green", rarity = "Legendary", fairPrice = 82000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=95196500046820" },
+			{ id = 98305906232207, name = "Гоша Рубчинский Флаги", rarity = "Legendary", fairPrice = 48000, spawnChance = 0.35, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=101736067946702" },
+			{ id = 117161695009647, name = "Stone Island Off Day Blue", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.35, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=113679737601896" },
+			{ id = 97856390601463, name = "Stone Island Red Hoodie Off Dye", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.35, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=81220837440974" },
+			{ id = 140022990256816, name = "Gallery Dept Худи Зеленое", rarity = "Legendary", fairPrice = 18000, spawnChance = 0.3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=115370689540260" },
+			{ id = 4843433327, name = "BAPE Yellow Camo Shark", rarity = "Legendary", fairPrice = 28000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=4843433312" },
+			{ id = 70895461143874, name = "Gutta Snake Year", rarity = "Legendary", fairPrice = 15000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=123206690688862" },
+			{ id = 8631651981, name = "Stone Island Desert Camo Jacket", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8631651969" },
+			{ id = 78185107533537, name = "CP.Company DD Shell Red", rarity = "Legendary", fairPrice = 75000, spawnChance = 0.3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=132013565350632" },
+			{ id = 14484000414, name = "Yohji Yamamoto Rei Ayanami Evangelion Button up", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=14484000375" },
+			{ id = 86114857882709, name = "Yohji Yamamoto Свитшот Avant Garde", rarity = "Legendary", fairPrice = 155000, spawnChance = 0.3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=98806393103327" },
+			{ id = 5166805206, name = "Yohji Yamamoto Свитшот Skull", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=5166805183" },
+			{ id = 16648632315, name = "Balenciaga GAMER Denim Jacket", rarity = "Legendary", fairPrice = 115000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=16648632262" },
+			{ id = 133873637543203, name = "Balenciaga Red Crimson Windbreaker", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=109182717388810" },
+			{ id = 8502567669, name = "Rick Owens Runway", rarity = "Legendary", fairPrice = 180000, spawnChance = 0.3, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=8502567661" },
+			{ id = 16919855258, name = "Chrome Hearts Multi-Colour Hoodie", rarity = "Legendary", fairPrice = 125000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=16919855211" },
+			{ id = 12621049095, name = "Moncler X PA Forest Green Top", rarity = "Legendary", fairPrice = 75000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12621049069" },
+			{ id = 14396989921, name = "Moncler x PA Puffer Jacket", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=14396989862" },
+			{ id = 125655994023355, name = "Raf Simons Christiane F Tees AW18", rarity = "Legendary", fairPrice = 195000, spawnChance = 0.3, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=123791858080621" },
+			{ id = 86995497093030, name = "Raf Simons Бомбер Белый", rarity = "Legendary", fairPrice = 160000, spawnChance = 0.3, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=117354704887130" },
+			{ id = 81231921426493, name = "Number(N)ine Zip Jacket", rarity = "Legendary", fairPrice = 220000, spawnChance = 0.3, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=133885913046054" },
+			{ id = 2474144253, name = "Off-White MonoLisa", rarity = "Legendary", fairPrice = 75000, spawnChance = 0.25, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=2474144248" },
+			{ id = 113247621156859, name = "CP.Company Black Windbreaker", rarity = "Legendary", fairPrice = 88000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=139489138382284" },
+			{ id = 118245234493513, name = "Racer WorldWide Леопардовая Зип-Худи", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=97015229289733" },
+			{ id = 129487569430492, name = "Yohji Yamamoto J-PT Иллюстрация", rarity = "Legendary", fairPrice = 115000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=126677760564089" },
+			{ id = 89790335131378, name = "Vetements Бомбер Зеленый", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=137163050708182" },
+			{ id = 77439910826532, name = "Vetements Бомбер Тёмно-Зеленый", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=83260757337933" },
+			{ id = 117766762488194, name = "Vetements Бомбер Красный", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=76107508359689" },
+			{ id = 71222633992816, name = "HBA Рубашка", rarity = "Legendary", fairPrice = 28000, spawnChance = 0.2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=100120983911427" },
+			{ id = 576444465, name = "Гоша Рубчинский Camo Спаси Сохрани", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=576444463" },
+			{ id = 139627508845654, name = "CP.Company DD Shell Beige", rarity = "Legendary", fairPrice = 78000, spawnChance = 0.2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=133857925190529" },
+			{ id = 5314403333, name = "Balenciaga Jean Jacket X Gosha", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=5314403312" },
+			{ id = 5029449227, name = "Moncler Striped Technical", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=5029449211" },
+			{ id = 137990594447175, name = "Maison Margiela Женская Меховая Куртка", rarity = "Legendary", fairPrice = 100000, spawnChance = 0.2, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=78070667368419" },
+			{ id = 322189906, name = "Cav Empt Not Impossible Crewneck", rarity = "Legendary", fairPrice = 12000, spawnChance = 0.15, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=322189905" },
+			{ id = 9930373240, name = "NeNet Футболка Диоловая", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.15, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=9930373233" },
+			{ id = 15706847548, name = "Гоша Рубчинский x Rassvet", rarity = "Legendary", fairPrice = 45000, spawnChance = 0.15, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=15706847529" },
+			{ id = 1213373791, name = "Off-White Camo", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.15, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=1213373788" },
+			{ id = 116168634401177, name = "Comme des Garcons X Rolling Stones Футболка", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.15, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=98965932254784" },
+			{ id = 8631755151, name = "Stone Island WATRO-TC Jacket", rarity = "Legendary", fairPrice = 88000, spawnChance = 0.15, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8631755137" },
+			{ id = 131336649441063, name = "CP.Company Navy Windbreaker", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.15, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=98404573180892" },
+			{ id = 4895301337, name = "Yohji Yamamoto Heroes Leather Байкерская Куртка", rarity = "Legendary", fairPrice = 185000, spawnChance = 0.15, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=4895301291" },
+			{ id = 17750429143, name = "Balenciaga GAMER Bomber", rarity = "Legendary", fairPrice = 140000, spawnChance = 0.15, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=17750429116" },
+			{ id = 99950858190570, name = "Number(N)ine Серая Zip Jacket", rarity = "Legendary", fairPrice = 245000, spawnChance = 0.15, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=121413776309543" },
+			{ id = 11290616980, name = "Vetements Бомбер Полиция", rarity = "Legendary", fairPrice = 135000, spawnChance = 0.15, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=11290616968" },
+			{ id = 1002344605, name = "Cav Empt Свитшот MD Document Crewneck", rarity = "Legendary", fairPrice = 16000, spawnChance = 0.1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=1002344601" },
+			{ id = 139421353405484, name = "Stone Island Reflective", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=111577510738468" },
+			{ id = 118064352416891, name = "Stone Island Comfort Tech Blue", rarity = "Legendary", fairPrice = 75000, spawnChance = 0.1, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=72581419227405" },
+			{ id = 120903225671360, name = "Stone Island Comfort Tech Red", rarity = "Legendary", fairPrice = 82000, spawnChance = 0.1, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=72056909985955" },
+			{ id = 115386784245524, name = "Yohji Yamamoto Зеленая Куртка", rarity = "Legendary", fairPrice = 88000, spawnChance = 0.1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=98522239109315" },
+			{ id = 1565502112, name = "Supreme x Bape x LV", rarity = "Legendary", fairPrice = 140000, spawnChance = 0.1, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=1565502110" },
+			{ id = 18813584989, name = "Balenciaga Reversible Bomber Jacket", rarity = "Legendary", fairPrice = 150000, spawnChance = 0.1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=18813584909" },
+			{ id = 11674658234, name = "Moncler Spider", rarity = "Legendary", fairPrice = 105000, spawnChance = 0.1, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=11674658197" },
+			{ id = 11484662835, name = "Moncler x PA Kelsey Puffer Blue", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.1, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=11484662800" },
+			{ id = 95423048146621, name = "Raf Simons SS10 Sterling Ruby Shirt", rarity = "Legendary", fairPrice = 280000, spawnChance = 0.1, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=92202912411173" },
+			{ id = 100168311309116, name = "Gallery Dept Футболка Шамана", rarity = "Legendary", fairPrice = 28000, spawnChance = 0.08, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=109387384568369" },
+			{ id = 13778721268, name = "Stone Island Skin Touch Purple", rarity = "Legendary", fairPrice = 98000, spawnChance = 0.08, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=13778721234" },
+			{ id = 99497707297997, name = "Racer WorldWide Куртка из Овечьи Шкуры", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.08, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=93929061709529" },
+			{ id = 18280893525, name = "Cav Empt Свитшот Joker", rarity = "Legendary", fairPrice = 22000, spawnChance = 0.07, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18280893501" },
+			{ id = 3052304894, name = "BAPE Tiger Camo", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.06, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=3052304804" },
+			{ id = 914784455, name = "Cav Empt Свитшот FW 17", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.05, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=914784451" },
+			{ id = 7397565263, name = "Nike Tech Windrunner Black", rarity = "Legendary", fairPrice = 22000, spawnChance = 0.05, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=7397565254" },
+			{ id = 72762590768448, name = "Chrome Hearts Camo Matty", rarity = "Legendary", fairPrice = 190000, spawnChance = 0.05, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=80849817692916" },
+			{ id = 98881995294054, name = "ERD Archive Худи Красный", rarity = "Legendary", fairPrice = 310000, spawnChance = 0.05, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=112414916707189" },
+			{ id = 122273528955293, name = "ERD Archive Лонгслив", rarity = "Legendary", fairPrice = 290000, spawnChance = 0.05, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=117808202442208" },
+			{ id = 17573405272, name = "Number(N)ine Серый Лонгслив", rarity = "Legendary", fairPrice = 310000, spawnChance = 0.05, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=17573405255" },
+			{ id = 297942903, name = "Cav Empt Бомбер", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.04, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=297942902" },
+			{ id = 436720176, name = "Гоша Рубчинский X Thrasher", rarity = "Legendary", fairPrice = 88000, spawnChance = 0.04, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=436720175" },
+			{ id = 132959748946564, name = "Stone Island Shadow Tiger Camo", rarity = "Legendary", fairPrice = 125000, spawnChance = 0.04, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=99587740919956" },
+			{ id = 772695241, name = "Гоша Рубчинский Зеленый Свитер", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.03, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=772695234" },
+			{ id = 75621017852847, name = "Gutta Opiy Shirt", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=116197719499900" },
+			{ id = 119767338320263, name = "Stone Island Comfort Tech Purple", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=96072265863113" },
+			{ id = 1081054870, name = "Gucci Coco Capitan", rarity = "Legendary", fairPrice = 245000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=1081054865" },
+			{ id = 2074367265, name = "TH Hoodie X Balenciaga x RAF", rarity = "Legendary", fairPrice = 220000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=2074367249" },
+			{ id = 125248485368695, name = "Balenciaga Paris", rarity = "Legendary", fairPrice = 245000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=130342095571450" },
+			{ id = 96585015209179, name = "Chrome Hearts T Logo USA Hoodie", rarity = "Legendary", fairPrice = 245000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=97057584627432" },
+			{ id = 120196252098729, name = "ERD Красная Джинсовка", rarity = "Legendary", fairPrice = 450000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=72161303025169" },
+			{ id = 5972477579, name = "Гоша Рубчинский Рождественский", rarity = "Legendary", fairPrice = 115000, spawnChance = 0.015, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=5972477551" },
+			{ id = 107248336623941, name = "Гоша Рубчинский Вдруг Друг", rarity = "Legendary", fairPrice = 115000, spawnChance = 0.015, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=126602708675680" },
+			{ id = 97197585182330, name = "Racer WorldWide ЛонгСлив Катя Кищук", rarity = "Legendary", fairPrice = 125000, spawnChance = 0.015, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=101546483409686" },
+			{ id = 82170977556685, name = "Balenciaga Nasa Bomber Jacket", rarity = "Legendary", fairPrice = 350000, spawnChance = 0.01, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=118565360972858" },
+			{ id = 16662225397, name = "Balenciaga Runway", rarity = "Legendary", fairPrice = 300000, spawnChance = 0.01, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=16662225319" },
+			{ id = 5944585429, name = "Chrome Hearts x Off-White Hoodie", rarity = "Legendary", fairPrice = 320000, spawnChance = 0.01, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=5944585412" },
+			{ id = 81895753471926, name = "Number(N)ine Shield Черное Худи", rarity = "Legendary", fairPrice = 420000, spawnChance = 0.01, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=126218652868749" },
+			{ id = 6501833600, name = "Palm Angels Zip Цветок", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.009, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=6501833581" },
+			{ id = 89385145596759, name = "Palm Angels Zip Диолетовый", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.009, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=119801182639139" },
+			{ id = 139017627542362, name = "Stone Island x Supreme Белые", rarity = "Legendary", fairPrice = 165000, spawnChance = 0.008, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=78339652684003" },
+			{ id = 13876916079, name = "Stone Island x Supreme", rarity = "Legendary", fairPrice = 165000, spawnChance = 0.008, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=116321915070400" },
+			{ id = 1103783724, name = "Bape x Supreme", rarity = "Legendary", fairPrice = 125000, spawnChance = 0.007, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=1103783722" },
+			{ id = 7205233886, name = "Palm Angels Zip Кислотный", rarity = "Legendary", fairPrice = 155000, spawnChance = 0.007, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=7205233873" },
+			{ id = 1329266704, name = "BAPE Full Zip Shark", rarity = "Legendary", fairPrice = 135000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=1329266661" },
+			{ id = 6071739662, name = "Off-White Virgil Abloh Красный", rarity = "Legendary", fairPrice = 285000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=6071739641" },
+			{ id = 131596879156451, name = "Yohji Yamamoto Свитшот Кожанка", rarity = "Legendary", fairPrice = 450000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=92502686962334" },
+			{ id = 7369775838, name = "Chrome Hearts x LV Jacket", rarity = "Legendary", fairPrice = 380000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=7369775832" },
+			{ id = 13429337035, name = "Moncler x PA Fiber Light Puffer", rarity = "Legendary", fairPrice = 400000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=13429337006" },
+			{ id = 122468912421457, name = "Maison Margiela Куртка из Ремней", rarity = "Legendary", fairPrice = 120000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=85073157438003" },
+			{ id = 132752004376816, name = "Yohji Yamamoto Куртка Красная", rarity = "Legendary", fairPrice = 480000, spawnChance = 0.004, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=130162125639664" },
+			{ id = 6676412081, name = "Haliky Gang Bears", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.003, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=6676412078" },
+			{ id = 90420982954859, name = "Yohji Yamamoto Куртка Темно-Синюю", rarity = "Legendary", fairPrice = 520000, spawnChance = 0.003, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=71906531939193" },
+			{ id = 8631671234, name = "Stone Island Big Loom Camo-Tc", rarity = "Legendary", fairPrice = 350000, spawnChance = 0.002, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=8631708414" },
+			{ id = 10443560347, name = "Raf Simons AW01 Runway", rarity = "Legendary", fairPrice = 950000, spawnChance = 0.002, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=10443560332" },
+			{ id = 6004029876, name = "Haliky Худи", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.001, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=6004029863" },
+			{ id = 18662896578, name = "Яндекс Доставка Футболка", rarity = "Legendary", fairPrice = 0, spawnChance = 0, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=18662896554" },
+			{ id = 75749441655962, name = "redvetements", rarity = "Legendary", fairPrice = 777, spawnChance = 0, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=82427332093486" },
+		},
+		Pants = {
+			-- Epic
+			{ id = 14502536751, name = "Chrome Hearts Logo White", rarity = "Epic", fairPrice = 24000, spawnChance = 15, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=14502536733" },
+			{ id = 104326582321744, name = "Maison Margiela Светлые Джинсы", rarity = "Epic", fairPrice = 45000, spawnChance = 15, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=137387299352418" },
+			{ id = 8425198358, name = "Prada Cargo", rarity = "Epic", fairPrice = 42000, spawnChance = 15, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=8425198346" },
+			{ id = 12517077399, name = "Rick Drkshdw Pants", rarity = "Epic", fairPrice = 38000, spawnChance = 12, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=12517077376" },
+			{ id = 15292591748, name = "LV Jeans", rarity = "Epic", fairPrice = 34000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15292591723" },
+			{ id = 5634486976, name = "Gucci shorts x Blue Lubz", rarity = "Epic", fairPrice = 36000, spawnChance = 8, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=5634486962" },
+			{ id = 89501380293235, name = "Rick Owens Джинсы Зип", rarity = "Epic", fairPrice = 45000, spawnChance = 8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=91026451304170" },
+			{ id = 11382056477, name = "Moncler Tech Pants", rarity = "Epic", fairPrice = 28000, spawnChance = 8, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=11382056472" },
+			{ id = 8425198358, name = "Acne Studios Jeans", rarity = "Epic", fairPrice = 22000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=8425198346" },
+			{ id = 85545557857293, name = "Rick Owens Штаны X Champion", rarity = "Epic", fairPrice = 55000, spawnChance = 5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=105899121032942" },
+			{ id = 80212103951429, name = "Moncler Classic Pants", rarity = "Epic", fairPrice = 34000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=78578971457655" },
+			{ id = 13781107752, name = "Stone Island Gray Pants", rarity = "Epic", fairPrice = 28000, spawnChance = 4.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=13781107731" },
+			{ id = 1226570804, name = "Goyard Джинсы", rarity = "Epic", fairPrice = 55000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=1226570796" },
+			{ id = 993568649, name = "Goyard Джинсы v2", rarity = "Epic", fairPrice = 58000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=993568642" },
+			{ id = 18588053395, name = "HBA Face Шорты", rarity = "Epic", fairPrice = 14000, spawnChance = 2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=18588053300" },
+			{ id = 12757775222, name = "Nike Tech Blue", rarity = "Epic", fairPrice = 6500, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12757775209" },
+			{ id = 112068921354030, name = "Gallery Dept Спортивки Серые v2", rarity = "Epic", fairPrice = 9000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=84143282861081" },
+			{ id = 15059936417, name = "BAPE Hellstar", rarity = "Epic", fairPrice = 12500, spawnChance = 1.2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15059936385" },
+			-- Legendary
+			{ id = 137773512709519, name = "ERD Потёртые Джинсы v1", rarity = "Legendary", fairPrice = 55000, spawnChance = 14, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=134667894646939" },
+			{ id = 18323948106, name = "Number(N)ine Черные Джинсы", rarity = "Legendary", fairPrice = 55000, spawnChance = 14, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=18323948073" },
+			{ id = 87891411586632, name = "Vetements Джинсы Потёртые", rarity = "Legendary", fairPrice = 20000, spawnChance = 14, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=140407383932406" },
+			{ id = 132566833184808, name = "Vetements Спортивки Белые", rarity = "Legendary", fairPrice = 16000, spawnChance = 14, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=76125724763039" },
+			{ id = 92049531048374, name = "Chrome Hearts Sweats Black", rarity = "Legendary", fairPrice = 38000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=104233925082759" },
+			{ id = 80693415563613, name = "Vetements Спортивки Черные", rarity = "Legendary", fairPrice = 16000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=83309274927695" },
+			{ id = 126970846706113, name = "Vetements Синие-Джинсы Потёртые", rarity = "Legendary", fairPrice = 24000, spawnChance = 10, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=119701709069263" },
+			{ id = 131319439176543, name = "Raf Simons Replicant Черный", rarity = "Legendary", fairPrice = 62000, spawnChance = 6, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=130901526860219" },
+			{ id = 18606916311, name = "Yohji Yamamoto Брюки", rarity = "Legendary", fairPrice = 78000, spawnChance = 5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=18606916273" },
+			{ id = 122599601118964, name = "Balenciaga Jeans", rarity = "Legendary", fairPrice = 38000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=106747850464319" },
+			{ id = 15696366780, name = "Chrome Hearts Jeans", rarity = "Legendary", fairPrice = 38000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=15696366766" },
+			{ id = 83641705983017, name = "ERD Потёртые Джинсы v2", rarity = "Legendary", fairPrice = 8000, spawnChance = 5, economyProfile = "safe", templateId = "http://www.roblox.com/asset/?id=121920454802593" },
+			{ id = 116642119535875, name = "Raf Simons Antei Purple", rarity = "Legendary", fairPrice = 48000, spawnChance = 5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=90331150141619" },
+			{ id = 102839033215257, name = "Number(N)ine Потёртые Джинсы", rarity = "Legendary", fairPrice = 42000, spawnChance = 5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=74773415025845" },
+			{ id = 122714934882673, name = "Chrome Hearts Grey Jeans", rarity = "Legendary", fairPrice = 42000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=138849171597664" },
+			{ id = 7136404058, name = "Chrome Hearts Blue Jeans", rarity = "Legendary", fairPrice = 42000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=7136404055" },
+			{ id = 16733661152, name = "Chrome Hearts Gray Denim Jeans", rarity = "Legendary", fairPrice = 38000, spawnChance = 4, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=16733661093" },
+			{ id = 16430470279, name = "Chrome Hearts Multi Color Cargos", rarity = "Legendary", fairPrice = 52000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=16430470261" },
+			{ id = 10946069869, name = "Chrome Hearts Pink-Black Jeans", rarity = "Legendary", fairPrice = 45000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=10946069856" },
+			{ id = 7902431231, name = "Chrome Hearts Blue Jeans Chrome", rarity = "Legendary", fairPrice = 24000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=7902431224" },
+			{ id = 7248675954, name = "Chrome Hearts X LV Jeans", rarity = "Legendary", fairPrice = 42000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=7248675948" },
+			{ id = 9026168986, name = "Chrome Hearts Red And Blue", rarity = "Legendary", fairPrice = 28000, spawnChance = 3, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=9026168961" },
+			{ id = 87554525526000, name = "Raf Simons Ozweego Metallic Pink", rarity = "Legendary", fairPrice = 58000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=94733727431242" },
+			{ id = 112685667527061, name = "Raf Simons Ozweego 3 Black Scarlett", rarity = "Legendary", fairPrice = 68000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=111846279148302" },
+			{ id = 72101896533425, name = "Raf Simons Ozweego 3 Bunny Cream", rarity = "Legendary", fairPrice = 65000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=126634936837558" },
+			{ id = 81765716375958, name = "Maison Margiela Темные Джинсы", rarity = "Legendary", fairPrice = 49000, spawnChance = 3, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=110732769471130" },
+			{ id = 93824635464666, name = "Balenciaga Grey Skater Sweatpants", rarity = "Legendary", fairPrice = 45000, spawnChance = 2.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=126517779663023" },
+			{ id = 124975585838444, name = "Balenciaga Blue Skater Sweatpants", rarity = "Legendary", fairPrice = 45000, spawnChance = 2.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=91597530501326" },
+			{ id = 15732426819, name = "Balenciaga Red Skater Sweatpants", rarity = "Legendary", fairPrice = 45000, spawnChance = 2.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15732426795" },
+			{ id = 15167783027, name = "Chrome Hearts Red Jeans", rarity = "Legendary", fairPrice = 45000, spawnChance = 2.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15167782987" },
+			{ id = 831537199, name = "Stone Island Navy", rarity = "Legendary", fairPrice = 34000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=831537196" },
+			{ id = 967030317, name = "LV Balmains", rarity = "Legendary", fairPrice = 72000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=967030312" },
+			{ id = 109107120274465, name = "Balenciaga Under Armor", rarity = "Legendary", fairPrice = 52000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=80892498626861" },
+			{ id = 84825703583648, name = "Rick Owens Джинсы Розовые", rarity = "Legendary", fairPrice = 85000, spawnChance = 2, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=107120598536058" },
+			{ id = 7548737358, name = "Chrome Hearts Orange Pants", rarity = "Legendary", fairPrice = 48000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=7548737350" },
+			{ id = 6488509571, name = "Moncler Red Tracksuit Bottom", rarity = "Legendary", fairPrice = 36000, spawnChance = 2, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=6488509541" },
+			{ id = 76698897803837, name = "Raf Simons Ultrasceptre Black", rarity = "Legendary", fairPrice = 65000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=75557197142540" },
+			{ id = 84478752542723, name = "Raf Simons Ozweego 2 Yellow Navy", rarity = "Legendary", fairPrice = 58000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=92971638700357" },
+			{ id = 75354435184240, name = "Raf Simons Cylon 21 Red", rarity = "Legendary", fairPrice = 70000, spawnChance = 2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=137535052172555" },
+			{ id = 15338842173, name = "Moncler Black Tracksuit Bottom", rarity = "Legendary", fairPrice = 42000, spawnChance = 1.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=15338842140" },
+			{ id = 124039750585318, name = "Raf Simons Ozweego 2 Khaki Gold", rarity = "Legendary", fairPrice = 120000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=111916884328976" },
+			{ id = 105222831634134, name = "Raf Simons Ozweego 2 Gray Green", rarity = "Legendary", fairPrice = 68000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=106963684303925" },
+			{ id = 70728690346102, name = "Raf Simons Ozweego 2 Blue Red Lucora", rarity = "Legendary", fairPrice = 75000, spawnChance = 1.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=74807243654778" },
+			{ id = 101535348409637, name = "Rick Leather", rarity = "Legendary", fairPrice = 125000, spawnChance = 1, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=113528327971525" },
+			{ id = 85305185315542, name = "Chrome Hearts Rolling Stones", rarity = "Legendary", fairPrice = 72000, spawnChance = 1, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=76648512722512" },
+			{ id = 109462627025831, name = "Raf Simons Ozweego Replicant Green", rarity = "Legendary", fairPrice = 62000, spawnChance = 1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=72166817530697" },
+			{ id = 131686044597910, name = "Raf Simons Ozweego Replicant Brown", rarity = "Legendary", fairPrice = 58000, spawnChance = 1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=90321397681781" },
+			{ id = 13444831702, name = "Supreme x BB", rarity = "Legendary", fairPrice = 28000, spawnChance = 0.8, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=13444831655" },
+			{ id = 5459824253, name = "Moncler X PA Trackpants", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.8, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=5459824215" },
+			{ id = 72015381801594, name = "BAPE Tiger Штаны Синие", rarity = "Legendary", fairPrice = 24000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=136214158712256" },
+			{ id = 137022318888712, name = "BAPE Tiger Штаны Красные", rarity = "Legendary", fairPrice = 24000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=91431686212610" },
+			{ id = 884721414, name = "Гоша Рубчинский x Kappa", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=884721412" },
+			{ id = 8631687945, name = "Stone Island Desert Camo", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8631687937" },
+			{ id = 124377088956183, name = "Racer Worldwide Светлые Джинсы", rarity = "Legendary", fairPrice = 18000, spawnChance = 0.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=116384868903033" },
+			{ id = 82685608298333, name = "Racer Worldwide Спортивные Штаны", rarity = "Legendary", fairPrice = 18000, spawnChance = 0.5, economyProfile = "normal", templateId = "http://www.roblox.com/asset/?id=97856540262333" },
+			{ id = 71399636217265, name = "SS04 Yohji Yamamoto Y-3 x 3S Spotted Джинсы", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.5, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=82141496081351" },
+			{ id = 134853942496739, name = "Zapatillas Gucci X Amiri", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=70522682896000" },
+			{ id = 14072460187, name = "Balenciaga Gamer Jeans", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=14072460151" },
+			{ id = 79285824675024, name = "Chrome Hearts Ryft Davis", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=135762991942060" },
+			{ id = 12636365073, name = "Moncler X PA Blue Tracksuit Bot", rarity = "Legendary", fairPrice = 58000, spawnChance = 0.5, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12636365033" },
+			{ id = 74573745510706, name = "ERD x Rick Owens Джинсы", rarity = "Legendary", fairPrice = 140000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=96427517504184" },
+			{ id = 102019726797995, name = "ERD Красные Джинсы", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.5, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=105784899081783" },
+			{ id = 131922684973046, name = "BAPE Tiger Штаны Темно-Зелен", rarity = "Legendary", fairPrice = 26000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=105050054678663" },
+			{ id = 16974632408, name = "CP.Company Orange Pants", rarity = "Legendary", fairPrice = 48000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=16974632350" },
+			{ id = 75548914998494, name = "Racer Worldwide Металлик Спортивные Штаны", rarity = "Legendary", fairPrice = 34000, spawnChance = 0.4, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=83178088059705" },
+			{ id = 12621050787, name = "Moncler X PA Forest Green Bot", rarity = "Legendary", fairPrice = 60000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12621050748" },
+			{ id = 12621049095, name = "Moncler X PA FG Tracksuit Bot", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.3, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=12621049069" },
+			{ id = 9084664827, name = "Palm Angels Диолетовые", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=9084664817" },
+			{ id = 8631779037, name = "Stone Island WATRO-TC", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.25, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=8631779021" },
+			{ id = 13868676222, name = "Burberry x Bape", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.2, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=13868676194" },
+			{ id = 138030819896058, name = "Racer Worldwide Трансформ Зип Джинсы", rarity = "Legendary", fairPrice = 48000, spawnChance = 0.15, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=124770374642522" },
+			{ id = 97665782669251, name = "Balenciaga NASA", rarity = "Legendary", fairPrice = 140000, spawnChance = 0.1, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=108319716834601" },
+			{ id = 18391376326, name = "ERD Archive Trousers", rarity = "Legendary", fairPrice = 220000, spawnChance = 0.1, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=18391375923" },
+			{ id = 125293782853552, name = "Raf Simons LSD White", rarity = "Legendary", fairPrice = 225000, spawnChance = 0.1, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=81190837714692" },
+			{ id = 99313817373559, name = "BAPE Tiger Штаны Диолетовые", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.08, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=126486170842278" },
+			{ id = 13779001426, name = "Stone Island Purple Skin Touch", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.08, economyProfile = "trap", templateId = "http://www.roblox.com/asset/?id=13779001394" },
+			{ id = 11796928325, name = "Гоша Рубчинский Рождест", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.06, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=11796928274" },
+			{ id = 120612391944120, name = "Raf Simons 2-CB GHB Patchwork", rarity = "Legendary", fairPrice = 270000, spawnChance = 0.05, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=84894983746398" },
+			{ id = 88741221455613, name = "Palm Angels x Raf Blue Red", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.02, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=102649937877868" },
+			{ id = 108047896837515, name = "Stone Island x Supreme White", rarity = "Legendary", fairPrice = 115000, spawnChance = 0.01, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=112790132457513" },
+			{ id = 84913974138865, name = "Stone Island x Supreme", rarity = "Legendary", fairPrice = 115000, spawnChance = 0.01, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=116321915070400" },
+			{ id = 84116395504704, name = "Balenciaga Leather", rarity = "Legendary", fairPrice = 320000, spawnChance = 0.01, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=127906814275652" },
+			{ id = 8631708424, name = "Stone Island Big Loom Camo-Tc", rarity = "Legendary", fairPrice = 280000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=8631708414" },
+			{ id = 101604148293803, name = "Raf Simons Pharaxus Green Black", rarity = "Legendary", fairPrice = 680000, spawnChance = 0.005, economyProfile = "jackpot", templateId = "http://www.roblox.com/asset/?id=74621497123361" },
+			{ id = 139013853108228, name = "Dior Джинсы", rarity = "Legendary", fairPrice = 0, spawnChance = 0, economyProfile = "risky", templateId = "http://www.roblox.com/asset/?id=123849684818742" },
+		},
+	}
+
+	ItemDB.ByID = {}
+	for _, group in pairs(ItemDB.Items) do
+		for _, item in ipairs(group) do
+			if not ItemDB.ByID[item.id] then
+				ItemDB.ByID[item.id] = item
+			end
+		end
+	end
+
+	function ItemDB:GetByRarity(rarity)
+		local result = {}
+		for _, group in pairs(self.Items) do
+			for _, item in ipairs(group) do
+				if item.rarity == rarity then
+					table.insert(result, item)
+				end
+			end
+		end
+		return result
+	end
+
+	function ItemDB:GetSpawnable(minChance)
+		minChance = minChance or 0.001
+		local result = {}
+		for _, group in pairs(self.Items) do
+			for _, item in ipairs(group) do
+				if item.spawnChance >= minChance then
+					table.insert(result, item)
+				end
+			end
+		end
+		return result
+	end
+
+	ItemDB.Accessory = {
+		-- Epic
+		{ id = 131264615705027, name = "Bathing Ape Handbag", meshId = "rbxassetid://136093540210455", accessoryType = "Shoulder", rarity = "Epic", fairPrice = 12500, spawnChance = 9 , economyProfile = "safe" },
+		{ id = 79424791867712, name = "Green BAPE Tiger Shoulder", meshId = "rbxassetid://81235629997005", accessoryType = "Shoulder", rarity = "Epic", fairPrice = 11800, spawnChance = 9 , economyProfile = "safe" },
+		{ id = 15365538178, name = "Gucci Snake Cap Beige", meshId = "rbxassetid://15357524023", accessoryType = "Hat", rarity = "Epic", fairPrice = 13500, spawnChance = 7 , economyProfile = "safe" },
+		{ id = 135443608430279, name = "Bape Money Рюкзак", meshId = "rbxassetid://93170558303352", accessoryType = "Hat", rarity = "Epic", fairPrice = 8200, spawnChance = 6 , economyProfile = "safe" },
+		{ id = 103585942937506, name = "Balenciaga White Cotton Baseball", meshId = "rbxassetid://75111360576513", accessoryType = "Hat", rarity = "Epic", fairPrice = 14500, spawnChance = 6 , economyProfile = "safe" },
+		{ id = 98285329614874, name = "Palm Angels Шапка", meshId = "rbxassetid://111981381676994", accessoryType = "Hat", rarity = "Epic", fairPrice = 7800, spawnChance = 6 , economyProfile = "safe" },
+		{ id = 15618444670, name = "Gucci Ophidia Mini Bucket", meshId = "rbxassetid://15617974224", accessoryType = "Back", rarity = "Epic", fairPrice = 18000, spawnChance = 5.5 , economyProfile = "safe" },
+		{ id = 15365538178, name = "Gucci Tiger Cap Black", meshId = "rbxassetid://15357524023", accessoryType = "Hat", rarity = "Epic", fairPrice = 16000, spawnChance = 5 , economyProfile = "safe" },
+		{ id = 73915987717142, name = "Gucci Tiger Cap Beige", meshId = "rbxassetid://109170456450250", accessoryType = "Hat", rarity = "Epic", fairPrice = 17500, spawnChance = 5 , economyProfile = "normal" },
+		{ id = 122387336980060, name = "Balenciaga Garment Tote Bag", meshId = "rbxassetid://120918014898346", accessoryType = "Waist", rarity = "Epic", fairPrice = 14200, spawnChance = 5 , economyProfile = "safe" },
+		{ id = 138597782011142, name = "Amiri Черная Кепка", meshId = "rbxassetid://115633883239539", accessoryType = "Hat", rarity = "Epic", fairPrice = 11500, spawnChance = 5 , economyProfile = "safe" },
+		{ id = 101345040863312, name = "Red Balenciaga Soccer Cap", meshId = "rbxassetid://99201079891579", accessoryType = "Hat", rarity = "Epic", fairPrice = 15800, spawnChance = 4.5 , economyProfile = "normal" },
+		{ id = 73636232354082, name = "Amiri Черная Кепка", meshId = "rbxassetid://112284347038504", accessoryType = "Hat", rarity = "Epic", fairPrice = 12800, spawnChance = 4.5 , economyProfile = "safe" },
+		{ id = 93245316947510, name = "Chrome Hearts Beanie", accessoryType = "Hat", rarity = "Epic", fairPrice = 15000, spawnChance = 4 , economyProfile = "safe" },
+		{ id = 136758600345289, name = "OffWhite Шапка", meshId = "rbxassetid://115907785594683", accessoryType = "Hat", rarity = "Epic", fairPrice = 7500, spawnChance = 4 , economyProfile = "safe" },
+		{ id = 127166886771622, name = "Amiri Бежевая Кепка", meshId = "rbxassetid://138760265155561", accessoryType = "Hat", rarity = "Epic", fairPrice = 13500, spawnChance = 4 , economyProfile = "normal" },
+		{ id = 6803398976, name = "Gucci Geometric Bag", meshId = "rbxassetid://6778993696", accessoryType = "Back", rarity = "Epic", fairPrice = 22000, spawnChance = 3.5 , economyProfile = "normal" },
+		{ id = 104245731367665, name = "OffWhite Очки", meshId = "rbxassetid://116388595717780", accessoryType = "Face", rarity = "Epic", fairPrice = 8200, spawnChance = 3.5 , economyProfile = "safe" },
+		{ id = 91779552119602, name = "Amiri Очки", meshId = "rbxassetid://94410055482024", accessoryType = "Face", rarity = "Epic", fairPrice = 14500, spawnChance = 3.5 , economyProfile = "normal" },
+		{ id = 6803405665, name = "Gucci Dionysus Bag", meshId = "rbxassetid://6779882439", accessoryType = "Back", rarity = "Epic", fairPrice = 28000, spawnChance = 3 , economyProfile = "normal" },
+		{ id = 13873585173, name = "Gallery Dept Кепка Оранжевая", meshId = "rbxassetid://13873136930", accessoryType = "Hat", rarity = "Epic", fairPrice = 6500, spawnChance = 3 , economyProfile = "safe" },
+		{ id = 112406308622997, name = "Goyard Сумка", meshId = "rbxassetid://131510594179728", accessoryType = "Front", rarity = "Epic", fairPrice = 12000, spawnChance = 3 , economyProfile = "safe" },
+		{ id = 131785740802039, name = "Moncler Beanie Blue", meshId = "rbxassetid://114745406160887", accessoryType = "Hat", rarity = "Epic", fairPrice = 18000, spawnChance = 2.5 , economyProfile = "normal" },
+		{ id = 92255858683108, name = "Vetements Кепка", meshId = "rbxassetid://79294162994435", accessoryType = "Hat", rarity = "Epic", fairPrice = 15500, spawnChance = 2.5 , economyProfile = "normal" },
+		{ id = 13894502462, name = "Gallery Dept Кепка Синюю", meshId = "rbxassetid://13873136930", accessoryType = "Hat", rarity = "Epic", fairPrice = 6800, spawnChance = 2.5 , economyProfile = "safe" },
+		{ id = 91027875446905, name = "Goyard Белая Сумка", meshId = "rbxassetid://76319070981169", accessoryType = "Front", rarity = "Epic", fairPrice = 14000, spawnChance = 2.5 , economyProfile = "safe" },
+		{ id = 101362692145279, name = "Goyard Оранжевая Сумка", meshId = "rbxassetid://76319070981169", accessoryType = "Back", rarity = "Epic", fairPrice = 13000, spawnChance = 2.5 , economyProfile = "trap" },
+		{ id = 107463812836545, name = "Goyard Оранжевый Рюкзак", meshId = "rbxassetid://132635062850639", accessoryType = "Back", rarity = "Epic", fairPrice = 13500, spawnChance = 2.2 , economyProfile = "normal" },
+		{ id = 109728855107243, name = "CP Company Goggle Beanie Black", meshId = "rbxassetid://96895273755883", accessoryType = "Hat", rarity = "Epic", fairPrice = 18500, spawnChance = 2 , economyProfile = "normal" },
+		{ id = 102314934915970, name = "CP Company Goggle Beanie White", meshId = "rbxassetid://96895273755883", accessoryType = "Hat", rarity = "Epic", fairPrice = 18500, spawnChance = 2 , economyProfile = "normal" },
+		{ id = 89459222464672, name = "Moncler Beanie Brown", meshId = "rbxassetid://114745406160887", accessoryType = "Hat", rarity = "Epic", fairPrice = 19500, spawnChance = 2 , economyProfile = "normal" },
+		{ id = 13884295551, name = "Gallery Dept Кепка Черная", meshId = "rbxassetid://13873136930", accessoryType = "Hat", rarity = "Epic", fairPrice = 7200, spawnChance = 2 , economyProfile = "normal" },
+		{ id = 95822351624156, name = "Goyard Диолетовый Рюкзак", meshId = "rbxassetid://121723285711779", accessoryType = "Back", rarity = "Epic", fairPrice = 15000, spawnChance = 2 , economyProfile = "safe" },
+		{ id = 111949854366573, name = "Goyard Диолетовый Рюкзак", meshId = "rbxassetid://139909673914395", accessoryType = "Back", rarity = "Epic", fairPrice = 14500, spawnChance = 2 , economyProfile = "normal" },
+		{ id = 18485185262, name = "Palm Angels Очки", meshId = "rbxassetid://18485057207", accessoryType = "Face", rarity = "Epic", fairPrice = 11500, spawnChance = 2 , economyProfile = "normal" },
+		{ id = 97762607397370, name = "Chrome Hearts Beige Beanie", meshId = "rbxassetid://120272448377408", accessoryType = "Hat", rarity = "Epic", fairPrice = 18500, spawnChance = 1.8 , economyProfile = "normal" },
+		{ id = 93219562611682, name = "Goyard Красная Сумка", meshId = "rbxassetid://131510594179728", accessoryType = "Front", rarity = "Epic", fairPrice = 16000, spawnChance = 1.8 , economyProfile = "normal" },
+		{ id = 112066199918577, name = "CP Company Goggle Beanie Green", meshId = "rbxassetid://96895273755883", accessoryType = "Hat", rarity = "Epic", fairPrice = 20000, spawnChance = 1.5 , economyProfile = "normal" },
+		{ id = 128046551718243, name = "Chrome Hearts Light Green Beanie", meshId = "rbxassetid://87586640618223", accessoryType = "Hat", rarity = "Epic", fairPrice = 19000, spawnChance = 1.5 , economyProfile = "normal" },
+		{ id = 83615864925509, name = "Chrome Hearts Light Blue Beanie", meshId = "rbxassetid://120272448377408", accessoryType = "Hat", rarity = "Epic", fairPrice = 21000, spawnChance = 1.2 , economyProfile = "normal" },
+		{ id = 116726350626289, name = "Chrome Hearts Red Beanie", meshId = "rbxassetid://87586640618223", accessoryType = "Hat", rarity = "Epic", fairPrice = 22000, spawnChance = 1 , economyProfile = "normal" },
+		{ id = 101362692145279, name = "Goyard Orange", meshId = "rbxassetid://76319070981169", accessoryType = "Front", rarity = "Epic", fairPrice = 10000, spawnChance = 0 , economyProfile = "trap" },
+		{ id = 16559373632, name = "Vultures", accessoryType = "Face", rarity = "Epic", fairPrice = 10000, spawnChance = 0 },
+		-- Legendary
+		{ id = 139197122817858, name = "Chrome Hearts Yellow Backpack", accessoryType = "Back", rarity = "Legendary", fairPrice = 35000, spawnChance = 2.5 , economyProfile = "trap" },
+		{ id = 79007717208299, name = "Chrome Hearts Blue Leather Bag", meshId = "rbxassetid://92633332715466", accessoryType = "Waist", rarity = "Legendary", fairPrice = 42000, spawnChance = 2 , economyProfile = "normal" },
+		{ id = 77140992757878, name = "Chrome Hearts Green Leather Bag", accessoryType = "Waist", rarity = "Legendary", fairPrice = 44000, spawnChance = 1.8 , economyProfile = "normal" },
+		{ id = 103017839244605, name = "Chrome Hearts Red Leather Bag", meshId = "rbxassetid://92633332715466", accessoryType = "Waist", rarity = "Legendary", fairPrice = 44000, spawnChance = 1.8 , economyProfile = "normal" },
+		{ id = 86427482003284, name = "Chrome Hearts Black Duffel", meshId = "rbxassetid://138701912237012", accessoryType = "Waist", rarity = "Legendary", fairPrice = 48000, spawnChance = 1.5 , economyProfile = "trap" },
+		{ id = 119663572151266, name = "Chrome Hearts Pink Leather Bag", meshId = "rbxassetid://92633332715466", accessoryType = "Waist", rarity = "Legendary", fairPrice = 46000, spawnChance = 1.5 , economyProfile = "trap" },
+		{ id = 109987483758270, name = "Chrome Hearts Light Brown Duffel", meshId = "rbxassetid://138701912237012", accessoryType = "Waist", rarity = "Legendary", fairPrice = 50000, spawnChance = 1.3 , economyProfile = "trap" },
+		{ id = 97966912305719, name = "Blue BAPE Tiger Backpack", meshId = "rbxassetid://81235629997005", accessoryType = "Back", rarity = "Legendary", fairPrice = 44000, spawnChance = 1.2 , economyProfile = "normal" },
+		{ id = 108037854904912, name = "Chrome Hearts Brown Duffel", meshId = "rbxassetid://138701912237012", accessoryType = "Waist", rarity = "Legendary", fairPrice = 52000, spawnChance = 1.2 , economyProfile = "trap" },
+		{ id = 109014454978498, name = "Chrome Hearts Purple Leather Bag", accessoryType = "Waist", rarity = "Legendary", fairPrice = 48000, spawnChance = 1.2 , economyProfile = "risky" },
+		{ id = 117843324273238, name = "Goyard Белый Рюкзак", meshId = "rbxassetid://79165724772579", accessoryType = "Back", rarity = "Legendary", fairPrice = 22000, spawnChance = 1.2 , economyProfile = "normal" },
+		{ id = 75336760704474, name = "Chrome Hearts White Duffel", accessoryType = "Waist", rarity = "Legendary", fairPrice = 55000, spawnChance = 1 , economyProfile = "risky" },
+		{ id = 135387131844952, name = "Goyard Рюкзак", meshId = "rbxassetid://112644963956375", accessoryType = "Back", rarity = "Legendary", fairPrice = 25000, spawnChance = 1 , economyProfile = "normal" },
+		{ id = 106839053930915, name = "Gucci Duffel Bag Black", meshId = "rbxassetid://96782774871580", accessoryType = "Waist", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.8 , economyProfile = "trap" },
+		{ id = 104339539451912, name = "Gucci Duffel Bag Beige", meshId = "rbxassetid://96782774871580", accessoryType = "Waist", rarity = "Legendary", fairPrice = 65000, spawnChance = 0.8 , economyProfile = "risky" },
+		{ id = 91603290514384, name = "Balenciaga Gamer Distressed Cap", meshId = "rbxassetid://134943767927408", accessoryType = "Hat", rarity = "Legendary", fairPrice = 45000, spawnChance = 0.8 , economyProfile = "normal" },
+		{ id = 81550191875286, name = "Balenciaga X Under Armour Duffel", meshId = "rbxassetid://121714349380810", accessoryType = "Waist", rarity = "Legendary", fairPrice = 55000, spawnChance = 0.8 , economyProfile = "normal" },
+		{ id = 78438678589037, name = "Goyard Желтый Рюкзак", meshId = "rbxassetid://121723285711779", accessoryType = "Back", rarity = "Legendary", fairPrice = 28000, spawnChance = 0.8 , economyProfile = "normal" },
+		{ id = 107066313514551, name = "Chrome Hearts Street Dirty Leather", meshId = "rbxassetid://92633332715466", accessoryType = "Waist", rarity = "Legendary", fairPrice = 58000, spawnChance = 0.7 , economyProfile = "normal" },
+		{ id = 101486965390763, name = "Red BAPE Tiger Backpack", meshId = "rbxassetid://81235629997005", accessoryType = "Back", rarity = "Legendary", fairPrice = 58000, spawnChance = 0.6 , economyProfile = "risky" },
+		{ id = 122914640223931, name = "MCM Рюкзак Белый", meshId = "rbxassetid://111309553743979", accessoryType = "Back", rarity = "Legendary", fairPrice = 41000, spawnChance = 0.6 , economyProfile = "safe" },
+		{ id = 96068891445307, name = "Balenciaga Alien Рюкзак", meshId = "rbxassetid://82306745608139", accessoryType = "Back", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.6 , economyProfile = "risky" },
+		{ id = 125854200114380, name = "Chrome Hearts Pink Beanie", meshId = "rbxassetid://87586640618223", accessoryType = "Hat", rarity = "Legendary", fairPrice = 28000, spawnChance = 0.6 , economyProfile = "risky" },
+		{ id = 113057369240600, name = "MCM Рюкзак", meshId = "rbxassetid://111309553743979", accessoryType = "Back", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.5 , economyProfile = "safe" },
+		{ id = 71040675246222, name = "CP Company Goggle Beanie Light Blue", meshId = "rbxassetid://96895273755883", accessoryType = "Hat", rarity = "Legendary", fairPrice = 35000, spawnChance = 0.5 , economyProfile = "risky" },
+		{ id = 89723156077371, name = "Balenciaga Distressed White Cap", meshId = "rbxassetid://93928236243115", accessoryType = "Hat", rarity = "Legendary", fairPrice = 48000, spawnChance = 0.5 , economyProfile = "normal" },
+		{ id = 104126944758670, name = "Balenciaga Blue Explorer", meshId = "rbxassetid://131583343974244", accessoryType = "Back", rarity = "Legendary", fairPrice = 78000, spawnChance = 0.5 , economyProfile = "normal" },
+		{ id = 109761541704044, name = "Chrome Hearts White Glasses", meshId = "rbxassetid://134029473011912", accessoryType = "Face", rarity = "Legendary", fairPrice = 58000, spawnChance = 0.5 , economyProfile = "normal" },
+		{ id = 5460373518, name = "OffWhite Сумка", meshId = "rbxassetid://5460175889", accessoryType = "Front", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.5 , economyProfile = "normal" },
+		{ id = 100351258840519, name = "Goyard Graffiti Рюкзак", meshId = "rbxassetid://115487074098392", accessoryType = "Back", rarity = "Legendary", fairPrice = 32000, spawnChance = 0.5 , economyProfile = "risky" },
+		{ id = 95715426059863, name = "Maison Margiela Тоут", meshId = "rbxassetid://93336140539996", accessoryType = "Waist", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.5 , economyProfile = "trap" },
+		{ id = 104467521699761, name = "Rick Owens Drkshdw Рюкзак", meshId = "rbxassetid://95582813741484", accessoryType = "Back", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.5 , economyProfile = "normal" },
+		{ id = 115389802684898, name = "Bape Рюкзак Camo", meshId = "rbxassetid://130261114190086", accessoryType = "Hat", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.4 , economyProfile = "risky" },
+		{ id = 130822108945941, name = "MCM Рюкзак Красный", meshId = "rbxassetid://72873729463239", accessoryType = "Back", rarity = "Legendary", fairPrice = 34000, spawnChance = 0.4 , economyProfile = "trap" },
+		{ id = 135279723356196, name = "Chrome Hearts Purple Beanie", meshId = "rbxassetid://87586640618223", accessoryType = "Hat", rarity = "Legendary", fairPrice = 32000, spawnChance = 0.4 , economyProfile = "risky" },
+		{ id = 120186577797659, name = "Chrome Hearts Black Glasses", accessoryType = "Face", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.4 , economyProfile = "normal" },
+		{ id = 76486673718873, name = "Gucci Goggles", accessoryType = "Face", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.3 , economyProfile = "risky" },
+		{ id = 96236164474655, name = "CP Company Goggle Beanie Sail", meshId = "rbxassetid://96895273755883", accessoryType = "Hat", rarity = "Legendary", fairPrice = 38000, spawnChance = 0.3 , economyProfile = "risky" },
+		{ id = 117973635335653, name = "Balenciaga x Chrome Cotton Blue", meshId = "rbxassetid://87472172558998", accessoryType = "Hat", rarity = "Legendary", fairPrice = 55000, spawnChance = 0.3 , economyProfile = "normal" },
+		{ id = 106641690712546, name = "Balenciaga Patchwork Bag", meshId = "rbxassetid://115489393703635", accessoryType = "Back", rarity = "Legendary", fairPrice = 82000, spawnChance = 0.3 , economyProfile = "normal" },
+		{ id = 132695427826329, name = "Chrome Hearts Crosses Beanie", meshId = "rbxassetid://114496416740243", accessoryType = "Hat", rarity = "Legendary", fairPrice = 52000, spawnChance = 0.3 , economyProfile = "normal" },
+		{ id = 125357035013809, name = "Chrome Hearts Duffle Bag", meshId = "rbxassetid://129014341131976", accessoryType = "Back", rarity = "Legendary", fairPrice = 88000, spawnChance = 0.3 , economyProfile = "risky" },
+		{ id = 127277375292070, name = "Balenciaga x Chrome Cotton Yellow", meshId = "rbxassetid://87472172558998", accessoryType = "Hat", rarity = "Legendary", fairPrice = 58000, spawnChance = 0.25 , economyProfile = "normal" },
+		{ id = 111982024415210, name = "Ebay X Balenciaga Trucker", meshId = "rbxassetid://81541835674046", accessoryType = "Hat", rarity = "Legendary", fairPrice = 58000, spawnChance = 0.2 , economyProfile = "trap" },
+		{ id = 6847979005, name = "LV Monogram Cap", accessoryType = "Hat", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.2 , economyProfile = "safe" },
+		{ id = 92420837177718, name = "Maison Margiela Шарф Черный", meshId = "rbxassetid://115341317940554", accessoryType = "Neck", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.2 , economyProfile = "normal" },
+		{ id = 6803412842, name = "Gucci Diamond-Framed Sunglasses", meshId = "rbxassetid://6783142181", accessoryType = "Face", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.15 , economyProfile = "normal" },
+		{ id = 84903025841942, name = "CP Company Goggle Beanie Red", meshId = "rbxassetid://96895273755883", accessoryType = "Hat", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.15 , economyProfile = "trap" },
+		{ id = 85692687437028, name = "Balenciaga x Chrome Cotton White", meshId = "rbxassetid://87472172558998", accessoryType = "Hat", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.15 , economyProfile = "risky" },
+		{ id = 108747673267074, name = "Chrome Hearts Silver Bracelet", accessoryType = "Shoulder", rarity = "Legendary", fairPrice = 78000, spawnChance = 0.15 , economyProfile = "normal" },
+		{ id = 137358532054126, name = "Moncler Beanie Black and Blue", meshId = "rbxassetid://114745406160887", accessoryType = "Hat", rarity = "Legendary", fairPrice = 48000, spawnChance = 0.15 , economyProfile = "risky" },
+		{ id = 90893801653709, name = "ERD Классическая Кепка", meshId = "rbxassetid://118892246906561", accessoryType = "Hat", rarity = "Legendary", fairPrice = 78000, spawnChance = 0.15 , economyProfile = "normal" },
+		{ id = 82508073931214, name = "Dior Рюкзак", meshId = "rbxassetid://90379369714342", accessoryType = "Back", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.12 , economyProfile = "normal" },
+		{ id = 14615307025, name = "White Maksakov Ghost", meshId = "rbxassetid://14615148494", accessoryType = "Hat", rarity = "Legendary", fairPrice = 85000, spawnChance = 0.1 , economyProfile = "risky" },
+		{ id = 99189491919957, name = "Balenciaga X Under Armour Piercing", meshId = "rbxassetid://101844134671192", accessoryType = "Back", rarity = "Legendary", fairPrice = 95000, spawnChance = 0.09 , economyProfile = "risky" },
+		{ id = 89818592943048, name = "NeNet Берет", meshId = "rbxassetid://130391015301578", accessoryType = "Hat", rarity = "Legendary", fairPrice = 42000, spawnChance = 0.09 , economyProfile = "risky" },
+		{ id = 14615310668, name = "Red Maksakov Ghost", meshId = "rbxassetid://14615148494", accessoryType = "Hat", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.08 , economyProfile = "risky" },
+		{ id = 14615304098, name = "Pink Maksakov Ghost", meshId = "rbxassetid://14615148494", accessoryType = "Hat", rarity = "Legendary", fairPrice = 88000, spawnChance = 0.08 , economyProfile = "normal" },
+		{ id = 109191017280869, name = "CP Company Goggle Beanie Pink", meshId = "rbxassetid://96895273755883", accessoryType = "Hat", rarity = "Legendary", fairPrice = 45000, spawnChance = 0.08 , economyProfile = "risky" },
+		{ id = 98026639580728, name = "Chrome Hearts Camo Grunge Leather", meshId = "rbxassetid://92633332715466", accessoryType = "Waist", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.08 , economyProfile = "risky" },
+		{ id = 6847974055, name = "LV Monogram Bucket Hat", accessoryType = "Hat", rarity = "Legendary", fairPrice = 92000, spawnChance = 0.08 , economyProfile = "safe" },
+		{ id = 120296789227673, name = "Amiri Бриллиантовая Цепочка", meshId = "rbxassetid://135156370078660", accessoryType = "Neck", rarity = "Legendary", fairPrice = 68000, spawnChance = 0.08 , economyProfile = "risky" },
+		{ id = 100702892962731, name = "Dior Лыжная Маска", meshId = "rbxassetid://131954166638361", accessoryType = "Hat", rarity = "Legendary", fairPrice = 78000, spawnChance = 0.08 , economyProfile = "risky" },
+		{ id = 89846079310975, name = "Bape Panda Shark Шапка", meshId = "rbxassetid://138903517494721", accessoryType = "Hat", rarity = "Legendary", fairPrice = 78000, spawnChance = 0.07 , economyProfile = "jackpot" },
+		{ id = 18147597296, name = "Balenciaga Sports Icon Distressed Cap", meshId = "rbxassetid://18147183510", accessoryType = "Hat", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.07 , economyProfile = "risky" },
+		{ id = 119024772298896, name = "Balenciaga Graffiti City White", meshId = "rbxassetid://119344122993391", accessoryType = "Waist", rarity = "Legendary", fairPrice = 115000, spawnChance = 0.06 , economyProfile = "risky" },
+		{ id = 6847995221, name = "ERD Waist Bag Destroyed", accessoryType = "Waist", rarity = "Legendary", fairPrice = 110000, spawnChance = 0.06 , economyProfile = "risky" },
+		{ id = 71591468298793, name = "Balenciaga Graffiti City Black", meshId = "rbxassetid://119344122993391", accessoryType = "Waist", rarity = "Legendary", fairPrice = 118000, spawnChance = 0.05 , economyProfile = "trap" },
+		{ id = 116403395006931, name = "MCM Рюкзак X SprayGround", meshId = "rbxassetid://131990103459496", accessoryType = "Back", rarity = "Legendary", fairPrice = 72000, spawnChance = 0.04 , economyProfile = "trap" },
+		{ id = 16301624126, name = "Gucci Savoy Small Hat Box", meshId = "rbxassetid://16301547559", accessoryType = "Front", rarity = "Legendary", fairPrice = 155000, spawnChance = 0.04 , economyProfile = "risky" },
+		{ id = 6803402872, name = "Gucci Dionysus Bag with Bee", meshId = "rbxassetid://6779861318", accessoryType = "Back", rarity = "Legendary", fairPrice = 195000, spawnChance = 0.04 , economyProfile = "risky" },
+		{ id = 98077128019618, name = "Moncler Logo Beanie Black", meshId = "rbxassetid://114745406160887", accessoryType = "Hat", rarity = "Legendary", fairPrice = 62000, spawnChance = 0.04 , economyProfile = "trap" },
+		{ id = 7495518344, name = "LV Bumbag Monogram", accessoryType = "Waist", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.03 , economyProfile = "trap" },
+		{ id = 6847991145, name = "ERD Chain Crossbody", accessoryType = "Shoulder", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.03 , economyProfile = "risky" },
+		{ id = 99692493214274, name = "Balenciaga Garment Large Tote", meshId = "rbxassetid://120918014898346", accessoryType = "Waist", rarity = "Legendary", fairPrice = 135000, spawnChance = 0.02 , economyProfile = "risky" },
+		{ id = 129539513019418, name = "Balenciaga Reverse Xpander Sunglasses", meshId = "rbxassetid://116893297363483", accessoryType = "Face", rarity = "Legendary", fairPrice = 160000, spawnChance = 0.02 , economyProfile = "risky" },
+		{ id = 87280317399320, name = "Chrome Hearts Cross Necklace Silver", meshId = "rbxassetid://94612984046803", accessoryType = "Neck", rarity = "Legendary", fairPrice = 135000, spawnChance = 0.02 , economyProfile = "trap" },
+		{ id = 16344213019, name = "Gucci Ophidia GG Backpack", meshId = "rbxassetid://16344176314", accessoryType = "Back", rarity = "Legendary", fairPrice = 340000, spawnChance = 0.015 , economyProfile = "jackpot" },
+		{ id = 6847995221, name = "LV District Messenger", accessoryType = "Shoulder", rarity = "Legendary", fairPrice = 185000, spawnChance = 0.015 , economyProfile = "risky" },
+		{ id = 133988893738584, name = "OffWhite Рюкзак", meshId = "rbxassetid://132227052677192", accessoryType = "Back", rarity = "Legendary", fairPrice = 88000, spawnChance = 0.015 , economyProfile = "jackpot" },
+		{ id = 92884235090318, name = "Balenciaga Red Spike Eyewear", meshId = "rbxassetid://132075891311095", accessoryType = "Face", rarity = "Legendary", fairPrice = 185000, spawnChance = 0.01 , economyProfile = "risky" },
+		{ id = 87874224966717, name = "Chrome Hearts Zebra Leather Bag", accessoryType = "Waist", rarity = "Legendary", fairPrice = 145000, spawnChance = 0.01 , economyProfile = "jackpot" },
+		{ id = 7495514829, name = "ERD Leather Backpack Black", accessoryType = "Back", rarity = "Legendary", fairPrice = 195000, spawnChance = 0.01 , economyProfile = "trap" },
+		{ id = 115400611080426, name = "Balenciaga x Gucci Duffle", meshId = "rbxassetid://119947504109652", accessoryType = "Waist", rarity = "Legendary", fairPrice = 220000, spawnChance = 0.008 , economyProfile = "trap" },
+		{ id = 87280317399320, name = "ERD Cross Chain Silver", meshId = "rbxassetid://94612984046803", accessoryType = "Neck", rarity = "Legendary", fairPrice = 175000, spawnChance = 0.008 , economyProfile = "trap" },
+		{ id = 129758048256121, name = "Balenciaga Butterfly Shades", meshId = "rbxassetid://97635263335014", accessoryType = "Face", rarity = "Legendary", fairPrice = 195000, spawnChance = 0.007 , economyProfile = "trap" },
+		{ id = 14523189142, name = "Maksakov Ghost", meshId = "rbxassetid://14523120250", accessoryType = "Hat", rarity = "Legendary", fairPrice = 210000, spawnChance = 0.005 , economyProfile = "jackpot" },
+		{ id = 119249567021092, name = "Balenciaga White Duffel", meshId = "rbxassetid://103190071706436", accessoryType = "Waist", rarity = "Legendary", fairPrice = 390000, spawnChance = 0.004 , economyProfile = "jackpot" },
+		{ id = 134357315882448, name = "Balenciaga Black Duffel", meshId = "rbxassetid://131487936353727", accessoryType = "Waist", rarity = "Legendary", fairPrice = 420000, spawnChance = 0.003 , economyProfile = "trap" },
+		{ id = 96209722328474, name = "Chrome Hearts Cross Chain Stacked", meshId = "rbxassetid://111324256200455", accessoryType = "Neck", rarity = "Legendary", fairPrice = 280000, spawnChance = 0.003 , economyProfile = "jackpot" },
+		{ id = 118231617266072, name = "Рюкзак NeNet", meshId = "rbxassetid://102181904855961", accessoryType = "Back", rarity = "Legendary", fairPrice = 320000, spawnChance = 0.003 , economyProfile = "jackpot" },
+		{ id = 94671579377101, name = "Balenciaga Black Spike Eyewear", meshId = "rbxassetid://132075891311095", accessoryType = "Face", rarity = "Legendary", fairPrice = 280000, spawnChance = 0.002 , economyProfile = "jackpot" },
+		{ id = 7495514829, name = "LV Keepall 55 Monogram", accessoryType = "Waist", rarity = "Legendary", fairPrice = 350000, spawnChance = 0.002 , economyProfile = "trap" },
+		{ id = 6847991145, name = "LV Christopher Backpack", accessoryType = "Back", rarity = "Legendary", fairPrice = 520000, spawnChance = 0.001 , economyProfile = "risky" },
+		{ id = 140525091977150, name = "RayBan Meta Smart Очки", meshId = "rbxassetid://105180070150253", accessoryType = "Face", rarity = "Legendary", fairPrice = 185000, spawnChance = 0.001 , economyProfile = "jackpot" },
+		{ id = 109916734150923, name = "Rick Red", accessoryType = "Back", rarity = "Legendary", fairPrice = 100000, spawnChance = 0 },
+		{ id = 13958665356, name = "Ушки Давида", accessoryType = "Hat", rarity = "Legendary", fairPrice = 0, spawnChance = 0 },
+		{ id = 84320297245519, name = "Шапка Louis Vuitton", accessoryType = "Hat", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 88579371932450, name = "Хром кепка", accessoryType = "Hat", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 117911531669734, name = "Шапка архив", accessoryType = "Hat", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 135381083740305, name = "Сумка сахура", accessoryType = "Front", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 18658360394, name = "Crossbones", accessoryType = "Back", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 122774828955897, name = "намбер кепка", accessoryType = "Hat", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 80515742217505, name = "aliv mask", accessoryType = "Hat", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 121071724731890, name = "крос сумка", accessoryType = "Back", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 94121613114845, name = "168mask", accessoryType = "Face", rarity = "Legendary", fairPrice = 666, spawnChance = 0 },
+		{ id = 8853097484, name = "Гучи Плащ", accessoryType = "Back", rarity = "Legendary", fairPrice = 77777, spawnChance = 0 },
+		{ id = 120784693278602, name = "мети рюкзак", accessoryType = "Back", rarity = "Legendary", fairPrice = 777, spawnChance = 0 },
+		{ id = 116804289671202, name = "шарф барбери", accessoryType = "Hat", rarity = "Legendary", fairPrice = 4567, spawnChance = 0 },
+		{ id = 16170111438, name = "Хермес очки", accessoryType = "Face", rarity = "Legendary", fairPrice = 42347, spawnChance = 0 },
+		{ id = 105474147340741, name = "дизайнер очки", accessoryType = "Face", rarity = "Legendary", fairPrice = 423427, spawnChance = 0 },
+		{ id = 81097280325860, name = "лакшери сумка", accessoryType = "Waist", rarity = "Legendary", fairPrice = 423427, spawnChance = 0 },
+		{ id = 223254372236950, name = "персик артема", accessoryType = "Face", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 87669926185132, name = "2093маска", accessoryType = "Face", rarity = "Legendary", fairPrice = 88888, spawnChance = 0 },
+		{ id = 111614000518901, name = "маска клоуна", accessoryType = "Face", rarity = "Legendary", fairPrice = 88888, spawnChance = 0 },
+		{ id = 15949935566, name = "епл наушинки", accessoryType = "Face", rarity = "Legendary", fairPrice = 88888, spawnChance = 0 },
+		{ id = 108594114657534, name = "happy tree сумка", accessoryType = "Back", rarity = "Legendary", fairPrice = 18888, spawnChance = 0 },
+		{ id = 114643917782484, name = "super spike pink", accessoryType = "Back", rarity = "Legendary", fairPrice = 188348, spawnChance = 0 },
+		{ id = 92901971978862, name = "super spike black", accessoryType = "Back", rarity = "Legendary", fairPrice = 188348, spawnChance = 0 },
+		{ id = 127873146197910, name = "лакшери лв", accessoryType = "Back", rarity = "Legendary", fairPrice = 1884348, spawnChance = 0 },
+		{ id = 105474147340741, name = "Дизайнерские Очки", accessoryType = "Face", rarity = "Legendary", fairPrice = 1000000, spawnChance = 0 },
+		{ id = 101549592756759, name = "група аниме тянок", accessoryType = "Back", rarity = "Legendary", fairPrice = 10000, spawnChance = 0 },
+		{ id = 91052418543158, name = "Rick V2", accessoryType = "Back", rarity = "Legendary", fairPrice = 777777, spawnChance = 0 },
+		{ id = 72934411748474, name = "америкаанский рюкзак", accessoryType = "Front", rarity = "Legendary", fairPrice = 6666, spawnChance = 0 },
+		{ id = 89744113500556, name = "fake smile", accessoryType = "Hat", rarity = "Legendary", fairPrice = 222, spawnChance = 0 },
+		{ id = 71533693364633, name = "Silly Space Alien", accessoryType = "Hat", rarity = "Legendary", fairPrice = 2000000000, spawnChance = 0 },
+		{ id = 109321081946730, name = "Rick Рюкзак", accessoryType = "Back", rarity = "Legendary", fairPrice = 1488, spawnChance = 0 },
+		{ id = 74642889794363, name = "mask13", accessoryType = "Face", rarity = "Legendary", fairPrice = 2000, spawnChance = 0 },
+		{ id = 123556664462463, name = "LvSki", accessoryType = "Hat", rarity = "Legendary", fairPrice = 2000, spawnChance = 0 },
+		{ id = 16650385017, name = "VR Очки", accessoryType = "Face", rarity = "Legendary", fairPrice = 0, spawnChance = 0 },
+	}
+
 	local CONFIG = {
 		Enabled = false, Range = 150, MinPrice = 0, MaxChance = 50,
 		UseMinPrice = false, UseMinChance = false,
@@ -2266,38 +2984,67 @@ do
 	local ESPReady = false
 	
 	local function FetchDatabases()
-		local MAIN_DB_URL = "https://raw.githubusercontent.com/awaky1337/base/refs/heads/main/database.lua"
-		local ACCS_URL = "https://raw.githubusercontent.com/awaky1337/base/refs/heads/main/accs_db"
-		local mainRaw, accsRaw
-		local mainDone, accsDone = false, false
-		task.spawn(function() mainRaw = cachedHttpGet("VeryEZ/db_main.cache", MAIN_DB_URL) mainDone = true end)
-		task.spawn(function() accsRaw = cachedHttpGet("VeryEZ/db_accs.cache", ACCS_URL) accsDone = true end)
-		local t0 = os.clock()
-		while (not mainDone or not accsDone) and (os.clock() - t0) < 15 do task.wait() end
+		-- Используем только встроенную базу данных
 		local db = {Items = {Shirt = {}, Pants = {}}}
-		if mainRaw then
-			local success, func = pcall(loadstring, mainRaw)
-			if success and type(func) == "function" then
-				local success2, result = pcall(func)
-				if success2 and type(result) == "table" and type(result.Items) == "table" then
-					db = result
-				end
-			end
-		end
-		local accessories = {}
-		if accsRaw then
-			accsRaw = string.gsub(accsRaw, '\\"', '"')
-			local codeStr = "return {" .. accsRaw .. "}"
-			local success, func = pcall(loadstring, codeStr)
-			if success and type(func) == "function" then
-				local success2, result = pcall(func)
-				if success2 and type(result) == "table" and type(result.Accessory) == "table" then
-					accessories = result.Accessory
+		
+		-- Заполняем из ItemDB
+		for category, items in pairs(ItemDB.Items) do
+			if db.Items[category] then
+				for _, item in ipairs(items) do
+					table.insert(db.Items[category], item)
 				end
 			end
 		end
 		
-		-- ДОБАВЛЯЕМ iPhone В БАЗУ АКСЕССУАРОВ
+		local accessories = {}
+		for _, item in ipairs(ItemDB.Accessory) do
+			table.insert(accessories, item)
+			if item.meshId and item.meshId ~= "" then
+				local mId = item.meshId:lower():gsub("\\", "")
+				if not MeshMap[mId] then MeshMap[mId] = {} end
+				table.insert(MeshMap[mId], item)
+			end
+			NameMap[item.name:lower()] = item
+		end
+		
+		for _, item in ipairs(accessories) do
+			if item.meshId and item.meshId ~= "" then
+				local mId = item.meshId:lower():gsub("\\", "")
+				if not MeshMap[mId] then MeshMap[mId] = {} end
+				table.insert(MeshMap[mId], item)
+			else
+				NameMap[item.name:lower()] = item
+			end
+			if not item.spawnChance then item.spawnChance = 18 end
+			if not item.economyProfile then item.economyProfile = "normal" end
+			if not item.rarity then item.rarity = "Common" end
+		end
+		
+		for _, category in ipairs({"Shirt", "Pants"}) do
+			if db.Items[category] then
+				for _, item in ipairs(db.Items[category]) do
+					item.accessoryType = category
+					local added = false
+					for _, key in ipairs({"meshId", "templateId", "textureId"}) do
+						if item[key] and item[key] ~= "" then
+							local kId = item[key]:lower():gsub("\\", "")
+							if not MeshMap[kId] then MeshMap[kId] = {} end
+							table.insert(MeshMap[kId], item)
+							added = true
+						end
+					end
+					if not added then
+						NameMap[item.name:lower()] = item
+					end
+					if not item.spawnChance then item.spawnChance = 18 end
+					if not item.economyProfile then item.economyProfile = "normal" end
+					if not item.rarity then item.rarity = "Common" end
+				end
+			end
+		end
+		
+		-- Добавляем iPhone из ItemDB.Accessory (уже есть)
+		-- Добавляем дополнительные iPhone, которые могут отсутствовать
 		local iPhones = {
 			{
 				id = 126572492692446,
@@ -2332,48 +3079,22 @@ do
 		}
 		
 		for _, phone in ipairs(iPhones) do
-			table.insert(accessories, phone)
-			if phone.meshId and phone.meshId ~= "" then				local mId = phone.meshId:lower():gsub("\\", "")
-				if not MeshMap[mId] then MeshMap[mId] = {} end
-				table.insert(MeshMap[mId], phone)
+			local found = false
+			for _, acc in ipairs(accessories) do
+				if acc.id == phone.id then found = true break end
 			end
-			NameMap[phone.name:lower()] = phone
+			if not found then
+				table.insert(accessories, phone)
+				if phone.meshId and phone.meshId ~= "" then
+					local mId = phone.meshId:lower():gsub("\\", "")
+					if not MeshMap[mId] then MeshMap[mId] = {} end
+					table.insert(MeshMap[mId], phone)
+				end
+				NameMap[phone.name:lower()] = phone
+			end
 		end
 		
-		for _, item in ipairs(accessories) do
-			if item.meshId and item.meshId ~= "" then
-				local mId = item.meshId:lower():gsub("\\", "")
-				if not MeshMap[mId] then MeshMap[mId] = {} end
-				table.insert(MeshMap[mId], item)
-			else
-				NameMap[item.name:lower()] = item
-			end
-			if not item.spawnChance then item.spawnChance = 18 end
-			if not item.economyProfile then item.economyProfile = "normal" end
-			if not item.rarity then item.rarity = "Common" end
-		end
-		for _, category in ipairs({"Shirt", "Pants"}) do
-			if db.Items[category] then
-				for _, item in ipairs(db.Items[category]) do
-					item.accessoryType = category
-					local added = false
-					for _, key in ipairs({"meshId", "templateId", "textureId"}) do
-						if item[key] and item[key] ~= "" then
-							local kId = item[key]:lower():gsub("\\", "")
-							if not MeshMap[kId] then MeshMap[kId] = {} end
-							table.insert(MeshMap[kId], item)
-							added = true
-						end
-					end
-					if not added then
-						NameMap[item.name:lower()] = item
-					end
-					if not item.spawnChance then item.spawnChance = 18 end
-					if not item.economyProfile then item.economyProfile = "normal" end
-					if not item.rarity then item.rarity = "Common" end
-				end
-			end
-		end
+		ESPReady = true
 	end
 
 	local function pColor(rarity)
@@ -3151,33 +3872,177 @@ end
 
 -- ============== KEY SYSTEM ==============
 do
-	local CORRECT_KEY = "LEGKO"
 	local KEY_FOLDER = "VeryEZ"
-	local KEY_FILE = "VeryEZ/key.json"
-	local KEY_TTL = 24 * 60 * 60
-	local DISCORD_INVITE = "https://discord.gg/tCdbzsQsK"
-	local hasFS = (writefile and readfile and isfile) and true or false
+	local KEY_FILE = "VeryEZ/key_data.json"
+	local hasFS = (writefile and readfile and isfile and isfolder and makefolder) and true or false
+	
+	-- Ключи: { ключ, тип, длительность_в_секундах }
+	-- 3 ключа по 1 дню (86400 секунд)
+	-- 3 ключа по 7 дней (604800 секунд)
+	-- 3 ключа по 30 дней (2592000 секунд)
+	-- 3 ключа навсегда (0 = бесконечно)
+	local VALID_KEYS = {
+		-- 1 день
+        { key = "DAY1_X7Kp9M2nVq4Rw8JsLt3FbHc1Zd5GeY6", type = "1day", duration = 86400 },
+		{ key = "DAY1_Ab3Cd5Ef7Gh9Ij1Kl3Mn5Op7Qr9St", type = "1day", duration = 86400 },
+		{ key = "DAY1_Zx9Yv7Tt5Rr3Pp1Nn9Ll5Jj7Hh3Ff", type = "1day", duration = 86400 },
+		{ key = "FREE1", type = "1day", duration = 86400 },
+		{ key = "FREE2", type = "1day", duration = 86400 },
+		{ key = "FREE3", type = "1day", duration = 86400 },
+		-- 7 дней
+		{ key = "WEEK1_Ws4Ed6Rf8Tg0Yh2Uj4Kl6Mn8Op0Qr", type = "7days", duration = 604800 },
+		{ key = "WEEK1_As5Df7Gh9Jk1Lz4Xc6Vb8Nm0Pq2Rt", type = "7days", duration = 604800 },
+		{ key = "WEEK1_Qw4Er6Ty8Ui0Op2As5Df7Gh9Jk1Lz", type = "7days", duration = 604800 },
+		-- 30 дней
+		{ key = "MONTH1_Xc3Vb5Nm7Pq9Rs2Tu4Wx6Yz8Ab0Cd", type = "30days", duration = 2592000 },
+		{ key = "MONTH1_Er6Ty8Ui0Op2As5Df7Gh9Jk1Lz4Xc", type = "30days", duration = 2592000 },
+		{ key = "MONTH1_Vb5Nm7Pq9Rs2Tu4Wx6Yz8Ab0Cd3Ef", type = "30days", duration = 2592000 },
+		-- Навсегда
+		{ key = "FOREVER_H7Kp9M2nVq4Rw8JsLt3FbHc1Zd5Ge", type = "forever", duration = 0 },
+		{ key = "FOREVER_Xy7Tt5Rr3Pp1Nn9Ll5Jj7Hh3Ff2Dd", type = "forever", duration = 0 },
+		{ key = "FOREVER_Ab3Cd5Ef7Gh9Ij1Kl3Mn5Op7Qr9St2", type = "forever", duration = 0 },
+		{ key = "MYKEY", type = "forever", duration = 0 },
+	}
+	
+	-- Функция для сохранения данных о ключе
+	local function saveKeyData(userId, keyData)
+		if not hasFS then return false end
+		pcall(function()
+			if isfolder and makefolder and not isfolder(KEY_FOLDER) then makefolder(KEY_FOLDER) end
+			writefile(KEY_FILE, HttpService:JSONEncode(keyData))
+		end)
+		return true
+	end
+	
+	-- Функция для загрузки данных о ключе
+	local function loadKeyData()
+		if not hasFS or not isfile(KEY_FILE) then return nil end
+		local ok, data = pcall(function() return HttpService:JSONDecode(readfile(KEY_FILE)) end)
+		if ok and type(data) == "table" then
+			return data
+		end
+		return nil
+	end
+	
+	-- Проверка валидности ключа (существует ли он в списке)
+	local function isValidKey(key)
+		for _, k in ipairs(VALID_KEYS) do
+			if k.key == key then
+				return true
+			end
+		end
+		return false
+	end
+	
+	-- Получить информацию о ключе
+	local function getKeyInfo(key)
+		for _, k in ipairs(VALID_KEYS) do
+			if k.key == key then
+				return k
+			end
+		end
+		return nil
+	end
+	
+	-- Проверка, истек ли ключ
+	local function isKeyExpired(keyData)
+		if not keyData then return true end
+		if keyData.duration == 0 then return false end -- Навсегда
+		if not keyData.activationTime then return true end
+		return (os.time() - keyData.activationTime) >= keyData.duration
+	end
+	
+	-- Проверка валидности с привязкой к пользователю
+	local function checkKey(userId, key)
+		local keyData = loadKeyData()
+		
+		-- Если нет сохраненных данных
+		if not keyData then
+			return false, "No key data"
+		end
+		
+		-- Проверяем, что ключ привязан к этому пользователю
+		if keyData.userId ~= userId then
+			return false, "Key bound to another user"
+		end
+		
+		-- Проверяем, что ключ совпадает
+		if keyData.key ~= key then
+			return false, "Invalid key"
+		end
+		
+		-- Проверяем, не истек ли ключ
+		if isKeyExpired(keyData) then
+			return false, "Key expired"
+		end
+		
+		return true, "Valid"
+	end
+	
+	-- Активация ключа (привязка к пользователю)
+	local function activateKey(userId, key)
+		local keyInfo = getKeyInfo(key)
+		if not keyInfo then
+			return false, "Invalid key"
+		end
+		
+		-- Проверяем, не использован ли уже этот ключ
+		local existingData = loadKeyData()
+		if existingData and existingData.key == key then
+			-- Ключ уже активирован, проверяем принадлежность
+			if existingData.userId ~= userId then
+				return false, "Key already used by another user"
+			end
+			-- Если ключ уже активирован этим пользователем, проверяем не истек ли
+			if isKeyExpired(existingData) then
+				return false, "Key expired"
+			end
+			return true, "Key already activated"
+		end
+		
+		-- Сохраняем активацию
+		local newData = {
+			userId = userId,
+			key = key,
+			activationTime = os.time(),
+			duration = keyInfo.duration,
+			type = keyInfo.type,
+		}
+		
+		if saveKeyData(userId, newData) then
+			return true, "Key activated"
+		else
+			return false, "Failed to save key data"
+		end
+	end
+	
+	-- Получить оставшееся время в читаемом формате
+	local function getRemainingTime(keyData)
+		if not keyData then return "Unknown" end
+		if keyData.duration == 0 then return "Forever" end
+		if not keyData.activationTime then return "Not activated" end
+		
+		local elapsed = os.time() - keyData.activationTime
+		local remaining = keyData.duration - elapsed
+		
+		if remaining <= 0 then return "Expired" end
+		
+		local days = math.floor(remaining / 86400)
+		local hours = math.floor((remaining % 86400) / 3600)
+		local minutes = math.floor((remaining % 3600) / 60)
+		
+		if days > 0 then
+			return string.format("%d days, %d hours", days, hours)
+		elseif hours > 0 then
+			return string.format("%d hours, %d minutes", hours, minutes)
+		else
+			return string.format("%d minutes", minutes)
+		end
+	end
 
 	MainFrame.Visible = false
 	Background.Visible = false
 	Blur.Enabled = false
-
-	local function saveKey()
-		if not hasFS then return end
-		pcall(function()
-			if isfolder and makefolder and not isfolder(KEY_FOLDER) then makefolder(KEY_FOLDER) end
-			writefile(KEY_FILE, HttpService:JSONEncode({ key = CORRECT_KEY, time = os.time() }))
-		end)
-	end
-
-	local function hasValidKey()
-		if not hasFS or not isfile(KEY_FILE) then return false end
-		local ok, data = pcall(function() return HttpService:JSONDecode(readfile(KEY_FILE)) end)
-		if ok and type(data) == "table" and data.key == CORRECT_KEY and type(data.time) == "number" then
-			return (os.time() - data.time) < KEY_TTL
-		end
-		return false
-	end
 
 	local function revealMenu()
 		unlocked = true
@@ -3193,9 +4058,23 @@ do
 		TweenService:Create(MainFrame, ti, {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 	end
 
-	if hasValidKey() then
-		revealMenu()
-	else
+	-- Проверка при запуске	local userId = LP.UserId
+	local keyData = loadKeyData()
+	
+	if keyData and keyData.userId == userId then
+		local valid, msg = checkKey(userId, keyData.key)
+		if valid then
+			revealMenu()
+		else
+			-- Ключ не валиден (истек или неверный), удаляем данные
+			if hasFS and isfile and isfile(KEY_FILE) then
+				pcall(delfile, KEY_FILE)
+			end
+		end
+	end
+
+	-- Если меню не открыто, показываем окно ввода ключа
+	if not unlocked then
 		local KeyGui = Instance.new("ScreenGui")
 		KeyGui.Name = "VeryEZ_Key"
 		KeyGui.ResetOnSpawn = false
@@ -3217,7 +4096,7 @@ do
 		local Win = Instance.new("Frame")
 		Win.AnchorPoint = Vector2.new(0.5, 0.5)
 		Win.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Win.Size = UDim2.new(0, 340, 0, 0)
+		Win.Size = UDim2.new(0, 360, 0, 0)
 		Win.AutomaticSize = Enum.AutomaticSize.Y
 		Win.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 		Win.BackgroundTransparency = 0.05
@@ -3242,7 +4121,7 @@ do
 		heading.LayoutOrder = 0
 		heading.BackgroundTransparency = 1
 		heading.Size = UDim2.new(1, 0, 0, 28)
-		heading.Text = "Enter Key"
+		heading.Text = "Enter License Key"
 		heading.TextColor3 = Color3.fromRGB(255, 255, 255)
 		heading.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 		heading.TextSize = 22
@@ -3253,7 +4132,7 @@ do
 		sub.BackgroundTransparency = 1
 		sub.Size = UDim2.new(1, 0, 0, 18)
 		sub.AutomaticSize = Enum.AutomaticSize.Y
-		sub.Text = "Join our Discord server to get the key"
+		sub.Text = "Enter your license key to activate the script"
 		sub.TextColor3 = Color3.fromRGB(180, 180, 195)
 		sub.TextWrapped = true
 		sub.FontFace = Font.new("rbxassetid://12187365364")
@@ -3274,7 +4153,7 @@ do
 		keyBox.BackgroundTransparency = 1
 		keyBox.Size = UDim2.new(1, 0, 1, 0)
 		keyBox.Text = ""
-		keyBox.PlaceholderText = "Key..."
+		keyBox.PlaceholderText = "Enter key..."
 		keyBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 130)
 		keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 		keyBox.TextXAlignment = Enum.TextXAlignment.Center
@@ -3292,6 +4171,17 @@ do
 		status.FontFace = Font.new("rbxassetid://12187365364")
 		status.TextSize = 12
 		status.Parent = Win
+		
+		local infoLabel = Instance.new("TextLabel")
+		infoLabel.LayoutOrder = 4
+		infoLabel.BackgroundTransparency = 1
+		infoLabel.Size = UDim2.new(1, 0, 0, 16)
+		infoLabel.Text = "Key types: 1 day, 7 days, 30 days, Forever"
+		infoLabel.TextColor3 = Color3.fromRGB(150, 150, 165)
+		infoLabel.FontFace = Font.new("rbxassetid://12187365364")
+		infoLabel.TextSize = 10
+		infoLabel.TextTransparency = 0.4
+		infoLabel.Parent = Win
 
 		local function makeBtn(order, text, bg, fg)
 			local b = Instance.new("TextButton")
@@ -3308,11 +4198,9 @@ do
 			return b
 		end
 
-		local submitBtn = makeBtn(4, "Submit Key", Color3.fromRGB(252, 190, 57), Color3.fromRGB(15, 15, 15))
-		local discordBtn = makeBtn(5, "Join Discord (copy invite)", Color3.fromRGB(88, 101, 242), Color3.fromRGB(255, 255, 255))
+		local submitBtn = makeBtn(5, "Activate Key", Color3.fromRGB(252, 190, 57), Color3.fromRGB(15, 15, 15))
 
 		local function closeAndReveal()
-			saveKey()
 			local fade = TweenInfo.new(0.25)
 			TweenService:Create(KeyBg, fade, {BackgroundTransparency = 1}):Play()
 			TweenService:Create(KeyBlur, fade, {Size = 0}):Play()
@@ -3325,31 +4213,41 @@ do
 
 		local function trySubmit()
 			local entered = keyBox.Text:gsub("^%s+", ""):gsub("%s+$", "")
-			if entered == CORRECT_KEY then
+			if entered == "" then
+				status.TextColor3 = Color3.fromRGB(250, 93, 86)
+				status.Text = "Please enter a key"
+				return
+			end
+			
+			-- Проверяем, существует ли такой ключ
+			if not isValidKey(entered) then
+				status.TextColor3 = Color3.fromRGB(250, 93, 86)
+				status.Text = "Invalid key. Please check and try again."
+				return
+			end
+			
+			-- Пытаемся активировать ключ
+			local success, msg = activateKey(userId, entered)
+			
+			if success then
 				status.TextColor3 = Color3.fromRGB(139, 195, 74)
-				status.Text = "Key accepted!"
+				status.Text = "Key activated! Welcome!"
 				closeAndReveal()
 			else
 				status.TextColor3 = Color3.fromRGB(250, 93, 86)
-				status.Text = "Invalid key. Try again."
+				if msg == "Key already used by another user" then
+					status.Text = "This key is already used by another user"
+				elseif msg == "Key expired" then
+					status.Text = "This key has expired"
+				else
+					status.Text = msg or "Activation failed"
+				end
 			end
 		end
 
 		submitBtn.MouseButton1Click:Connect(trySubmit)
 		keyBox.FocusLost:Connect(function(enter) if enter then trySubmit() end end)
-
-		discordBtn.MouseButton1Click:Connect(function()
-			local cb = setclipboard or toclipboard or setrbxclipboard or (syn and syn.write_clipboard)
-			if cb then
-				pcall(cb, DISCORD_INVITE)
-				status.TextColor3 = Color3.fromRGB(139, 195, 74)
-				status.Text = "Invite copied!"
-			else
-				status.TextColor3 = Color3.fromRGB(252, 190, 57)
-				status.Text = DISCORD_INVITE
-			end
-		end)
 	end
 end
 
-print("GUI Ready!")
+print("GUI Ready!") 
