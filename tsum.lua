@@ -1539,10 +1539,16 @@ do
 	end)
 end
 
--- ============== СОДЕРЖИМОЕ VISUALS ==============
+-- ============== VISUALS ==============
 local WorldVisuals = { TransparentGlass = false, TimeChanger = false, TimeOfDay = 12, Skybox = "Black Storm" }
 local NicknamePins = { CustomNickname = false, Nickname = "", RainbowNickname = false, PinsAboveName = false, Pins = {} }
 local MoneySpoof = { Enabled = false, Amount = 0 }
+local ClanVisuals = { 
+    CustomClan = false, 
+    ClanName = "", 
+    RainbowClan = false, 
+    ProtectClan = false
+}
 
 do
 local VisualsLeft, VisualsRight = CreateColumns(pages["Visuals"])
@@ -1554,11 +1560,231 @@ CreateSlider(WorldCard, "Time Of Day", 0, 24, 12, "", function(v) WorldVisuals.T
 CreateHeader(WorldCard, "Select Skybox")
 CreateDropdown(WorldCard, {"Black Storm", "Blue Space", "HD", "Realistic", "Snow"}, "Black Storm", function(v) WorldVisuals.Skybox = v end)
 
+-- Nickname & Pins
 local NickCard = CreateCard(VisualsLeft, "Nickname & Pins")
 CreateToggle(NickCard, "Custom Nickname", false, function(on) NicknamePins.CustomNickname = on end, true)
 CreateTextInput(NickCard, "Nickname", "Введите ник...", function(text) NicknamePins.Nickname = text end)
 CreateToggle(NickCard, "Rainbow Nickname", false, function(on) NicknamePins.RainbowNickname = on end, true)
 CreateToggle(NickCard, "Pins Above Name", false, function(on) NicknamePins.PinsAboveName = on end, true)
+
+-- Protect Name (обновленная версия с глючными символами)
+CreateToggle(NickCard, "Protect Name", false, function(on)
+    if on then
+        local player = LP
+        local originalName = player.DisplayName or player.Name or "Player"
+        
+        local hackerChars = {
+            "⍟", "⍣", "⍤", "⍥", "⍦", "⍧", "⍨", "⍩", "⍪", "⍫", "⍬", "⍭", "⍮", "⍯", "⍰", "⍱", "⍲", "⍳", "⍴", "⍵",
+            "⌁", "⌂", "⌃", "⌄", "⌅", "⌆", "⌇", "⌈", "⌉", "⌊", "⌋", "⌌", "⌍", "⌎", "⌏", "⌐", "⌑", "⌒", "⌓", "⌔",
+            "⌕", "⌖", "⌗", "⌘", "⌙", "⌜", "⌝", "⌞", "⌟", "⌠", "⌡", "⌢", "⌣", "⌤", "⌥", "⌦", "⌧"
+        }
+        local glitchChars = {
+            "҉", "҈", "Ҋ", "Ҍ", "Ҏ", "Ґ", "Ғ", "Ҕ", "Җ", "Ҙ", "Қ", "Ҝ", "Ҟ", "Ҡ", "Ң", "Ҥ", "Ҧ", "Ҩ", "Ҫ", "Ҭ",
+            "Ү", "Ұ", "Ҳ", "Ҵ", "Ҷ", "Ҹ", "Һ", "Ҽ", "Ҿ", "Ӏ", "Ӄ", "Ӆ", "Ӈ", "Ӊ", "Ӌ", "Ӎ", "ӏ", "Ӑ", "Ӓ", "Ӕ",
+            "Ӗ", "Ә", "Ӛ", "Ӝ", "Ӟ", "Ӡ", "Ӣ", "Ӥ", "Ӧ", "Ө", "Ӫ", "Ӭ", "Ӯ", "Ӱ", "Ӳ", "Ӵ", "Ӷ", "Ӹ", "Ӻ", "Ӽ"
+        }
+        local matrixChars = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}
+        local binaryChars = {"0","1","0","1","0","1","0","1","0","1"}
+        local glitchFull = {"░", "▒", "▓", "█", "▌", "▐", "▀", "▄", "■", "□", "▪", "▫", "▬", "▭", "▮", "▯"}
+        local brackets = {"[", "]", "(", ")", "{", "}", "<", ">"}
+        local cuneiform = {"𒀀","𒀁","𒀂","𒀃","𒀄","𒀅","𒀆","𒀇","𒀈","𒀉","𒀊","𒀋","𒀌","𒀍","𒀎","𒀏","𒀐","𒀑","𒀒","𒀓","𒀔","𒀕","𒀖","𒀗","𒀘","𒀙","𒀚","𒀛","𒀜","𒀝","𒀞","𒀟","𒀠","𒀡","𒀢","𒀣","𒀤","𒀥","𒀦","𒀧","𒀨","𒀩","𒀪","𒀫","𒀬","𒀭","𒀮","𒀯","𒀰","𒀱","𒀲","𒀳","𒀴","𒀵","𒀶","𒀷","𒀸","𒀹","𒀺","𒀻","𒀼","𒀽","𒀾","𒀿","𒁀","𒁁","𒁂","𒁃","𒁄","𒁅","𒁆","𒁇","𒁈","𒁉","𒁊","𒁋","𒁌","𒁍","𒁎","𒁏","𒅒","𒈔","𒇫","𒄆"}
+        local arabicChars = {"ء","آ","أ","ؤ","إ","ئ","ا","ب","ة","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي","ٱ","ٲ","ٳ","ٴ","ٵ","ٶ","ٷ","ٸ","ٹ","ٺ","ٻ","ټ","ٽ","پ","ٿ","ڀ","ځ","ڂ","ڃ","ڄ","څ","چ","ڇ","ڈ","ډ","ڊ","ڋ","ڌ","ڍ","ڎ","ڏ","ڐ","ڑ","ڒ","ړ"}
+        local chineseChars = {"一","丁","七","万","丈","三","上","下","不","与","丐","丑","专","且","世","丘","丙","业","丛","东","丝","丞","丟","两","严","丧","个","中","丰","串","临","丸","丹","为","主","丽","举","乃","久","么","义","之","乌","乍","乎","乏","乐","乒","乓","乔","乖","乗","乙","九","乞","也","习","乡","书","买","乱","乳","乾","了","予","争","事","二","于","云","互","五","井","亘","亚","些","亡","交","亥","亦","产","亨","亩","享","京","亭","亮","亲","人","什","仅","仆","仇","今","介","仍","从","仑","仓","仔"}
+        local specialMix = {"𒅒","𒈔","𒅒","𒇫","𒄆","𒄆","𓁹","✞","𒀱","✞","𓁹","𒄆"}
+        
+        local function getGlitchName()
+            local name = originalName
+            local effects = {
+                function()
+                    local t = ""
+                    for i = 1, #name do
+                        local rand = math.random()
+                        if rand < 0.12 then t = t .. hackerChars[math.random(#hackerChars)]
+                        elseif rand < 0.24 then t = t .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.36 then t = t .. matrixChars[math.random(#matrixChars)]
+                        elseif rand < 0.48 then t = t .. cuneiform[math.random(#cuneiform)]
+                        elseif rand < 0.60 then t = t .. arabicChars[math.random(#arabicChars)]
+                        elseif rand < 0.72 then t = t .. chineseChars[math.random(#chineseChars)]
+                        else t = t .. name:sub(i, i) end
+                    end
+                    if math.random() < 0.3 then t = specialMix[math.random(#specialMix)] .. t .. specialMix[math.random(#specialMix)] end
+                    if math.random() < 0.4 then t = brackets[math.random(#brackets)] .. t .. brackets[math.random(#brackets)] end
+                    return t
+                end,
+                function()
+                    local full = "► " .. name .. " ◄"
+                    local result = ""
+                    local offset = tick() * 10
+                    for i = 1, #full do
+                        local idx = (i + offset) % #full + 1
+                        local c = full:sub(idx, idx)
+                        if c == " " then result = result .. " "
+                        elseif math.random() < 0.15 then result = result .. glitchFull[math.random(#glitchFull)]
+                        elseif math.random() < 0.10 then result = result .. hackerChars[math.random(#hackerChars)]
+                        elseif math.random() < 0.10 then result = result .. cuneiform[math.random(#cuneiform)]
+                        elseif math.random() < 0.10 then result = result .. arabicChars[math.random(#arabicChars)]
+                        else result = result .. c end
+                    end
+                    if math.random() < 0.25 then result = "𒅒" .. result .. "𒅒" end
+                    return result
+                end,
+                function()
+                    local t = ""
+                    local progress = tick() % 2.5 / 2.5
+                    for i = 1, #name do
+                        if i / #name <= progress then t = t .. name:sub(i, i)
+                        elseif math.random() < 0.3 then t = t .. matrixChars[math.random(#matrixChars)]
+                        elseif math.random() < 0.3 then t = t .. glitchChars[math.random(#glitchChars)]
+                        else t = t .. cuneiform[math.random(#cuneiform)] end
+                    end
+                    if math.random() < 0.2 then t = "𒀱" .. t .. "𒀱" end
+                    return t
+                end,
+                function()
+                    local t = ""
+                    for i = 1, #name do
+                        if math.random() < 0.35 then
+                            t = t .. binaryChars[math.random(#binaryChars)]
+                            if math.random() < 0.3 then t = t .. binaryChars[math.random(#binaryChars)] end
+                        else t = t .. name:sub(i, i) end
+                    end
+                    if math.random() < 0.2 then t = "✞" .. t .. "✞" end
+                    if math.random() < 0.3 then t = "[" .. t .. "]" end
+                    return t
+                end,
+                function()
+                    local t = ""
+                    for i = 1, #name do
+                        local rand = math.random()
+                        if rand < 0.15 then t = t .. name:sub(i, i)
+                        elseif rand < 0.30 then t = t .. glitchFull[math.random(#glitchFull)]
+                        elseif rand < 0.45 then t = t .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.60 then t = t .. hackerChars[math.random(#hackerChars)]
+                        elseif rand < 0.75 then t = t .. cuneiform[math.random(#cuneiform)]
+                        else t = t .. arabicChars[math.random(#arabicChars)] end
+                    end
+                    if math.random() < 0.3 then t = "𓁹" .. t .. "𓁹" end
+                    return t
+                end,
+                function()
+                    local prefixes = {"$","€","£","¥","¢","₽","₿","₪","₫","₭","₮","₯","₰","₱","₲","₳","₴","₵"}
+                    local t = prefixes[math.random(#prefixes)]
+                    for i = 1, #name do
+                        local rand = math.random()
+                        if rand < 0.20 then t = t .. matrixChars[math.random(#matrixChars)]
+                        elseif rand < 0.15 then t = t .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.15 then t = t .. cuneiform[math.random(#cuneiform)]
+                        elseif rand < 0.15 then t = t .. chineseChars[math.random(#chineseChars)]
+                        else t = t .. name:sub(i, i) end
+                    end
+                    if math.random() < 0.35 then t = t .. prefixes[math.random(#prefixes)] end
+                    if math.random() < 0.2 then t = "𒄆" .. t .. "𒄆" end
+                    return t
+                end,
+                function()
+                    local t = ""
+                    for i = 1, #name do
+                        if math.random() < 0.15 then t = t .. cuneiform[math.random(#cuneiform)]
+                        elseif math.random() < 0.15 then t = t .. arabicChars[math.random(#arabicChars)]
+                        elseif math.random() < 0.15 then t = t .. chineseChars[math.random(#chineseChars)]
+                        else t = t .. name:sub(i, i) end
+                    end
+                    if math.random() < 0.3 then t = "𒅒𒈔" .. t .. "𒈔𒅒" end
+                    return t
+                end,
+                function()
+                    local full = name
+                    local result = ""
+                    local offset = tick() * 12
+                    for i = 1, #full do
+                        local idx = (i + offset) % #full + 1
+                        local c = full:sub(idx, idx)
+                        local rand = math.random()
+                        if rand < 0.08 then result = result .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.08 then result = result .. hackerChars[math.random(#hackerChars)]
+                        elseif rand < 0.08 then result = result .. cuneiform[math.random(#cuneiform)]
+                        else result = result .. c end
+                    end
+                    if math.random() < 0.2 then result = "✞" .. result .. "✞" end
+                    return result
+                end
+            }
+            return effects[math.random(#effects)]()
+        end
+        
+        -- Находим NameText и сохраняем оригинальный текст
+        local pg = LP:FindFirstChild("PlayerGui")
+        if not pg then return end
+        local bb = pg:FindFirstChild("LocalResellerNameTag")
+        if not bb then return end
+        local nameLbl = bb:FindFirstChild("NameText", true)
+        if not nameLbl then return end
+        
+        -- Сохраняем оригинальный ник для использования
+        NicknamePins._originalName = nameLbl.Text
+        
+        if NicknamePins._protectNameThread then 
+            NicknamePins._protectNameThread = nil 
+        end
+        
+        -- Запускаем поток изменения ника
+        NicknamePins._protectNameThread = task.spawn(function()
+            local speed = 0.07
+            while NicknamePins._protectNameThread do
+                local newName = getGlitchName()
+                -- Прячем пины если они есть
+                local container = nameLbl.Parent
+                if container then
+                    for _, child in ipairs(container:GetChildren()) do
+                        if child:IsA("ImageLabel") then 
+                            child.Visible = false 
+                        end
+                    end
+                end
+                nameLbl.Text = newName
+                task.wait(speed)
+            end
+        end)
+    else
+        -- Отключаем Protect Name
+        if NicknamePins._protectNameThread then
+            task.cancel(NicknamePins._protectNameThread)
+            NicknamePins._protectNameThread = nil
+        end
+        
+        -- Возвращаем оригинальный ник
+        local pg = LP:FindFirstChild("PlayerGui")
+        if not pg then return end
+        local bb = pg:FindFirstChild("LocalResellerNameTag")
+        if not bb then return end
+        local nameLbl = bb:FindFirstChild("NameText", true)
+        if not nameLbl then return end
+        
+        -- Восстанавливаем оригинальный ник или используем DisplayName
+        local orig = LP.DisplayName
+        local clanRemote = game.ReplicatedStorage:FindFirstChild("ClanRemotes")
+        if clanRemote then
+            local getMyClan = clanRemote:FindFirstChild("GetMyClan")
+            if getMyClan and getMyClan:IsA("RemoteFunction") then
+                local success, clanData = pcall(function() return getMyClan:InvokeServer() end)
+                if success and clanData then
+                    orig = clanData.leaderName or LP.DisplayName
+                end
+            end
+        end
+        nameLbl.Text = orig
+        
+        -- Восстанавливаем видимость пинов
+        local container = nameLbl.Parent
+        if container then
+            for _, child in ipairs(container:GetChildren()) do
+                if child:IsA("ImageLabel") then 
+                    child.Visible = true 
+                end
+            end
+        end
+    end
+end, true)
 
 local MoneyCard = CreateCard(VisualsLeft, "Money Spoof")
 CreateToggle(MoneyCard, "Money Spoof", false, function(on) MoneySpoof.Enabled = on end)
@@ -1567,32 +1793,879 @@ CreateTextInput(MoneyCard, "Money Amount", "Введите сумму...", funct
 local PinsCard = CreateCard(VisualsRight, "Select Pins")
 local pinsList = {"Dev", "TT", "Mod", "YT", "VIP", "Adm", "Ver", "Star", "Own", "Prem"}
 for _, p in ipairs(pinsList) do
-	CreateToggle(PinsCard, p, false, function(on) NicknamePins.Pins[p] = on end)
-end
+    CreateToggle(PinsCard, p, false, function(on) NicknamePins.Pins[p] = on end)
 end
 
--- ============== СОДЕРЖИМОЕ MISC ==============
+-- Clan Visuals
+local ClanCard = CreateCard(VisualsRight, "Clan")
+CreateTextInput(ClanCard, "Custom Clan Name", "Введите название...", function(text) ClanVisuals.ClanName = text end)
+CreateToggle(ClanCard, "Custom Clan", false, function(on) 
+    ClanVisuals.CustomClan = on 
+    if on then
+        LP:SetAttribute("ClanTag", ClanVisuals.ClanName)
+    else
+        local clanRemote = game.ReplicatedStorage:FindFirstChild("ClanRemotes")
+        if clanRemote then
+            local getMyClan = clanRemote:FindFirstChild("GetMyClan")
+            if getMyClan and getMyClan:IsA("RemoteFunction") then
+                local success, clanData = pcall(function() return getMyClan:InvokeServer() end)
+                if success and clanData then
+                    LP:SetAttribute("ClanTag", clanData.tag)
+                end
+            end
+        end
+    end
+end, true)
+CreateToggle(ClanCard, "Rainbow Clan", false, function(on) 
+    ClanVisuals.RainbowClan = on 
+    LP:SetAttribute("ClanRainbow", on)
+end, true)
+CreateToggle(ClanCard, "Protect Clan", false, function(on) 
+    ClanVisuals.ProtectClan = on 
+    if on then
+        local player = LP
+        local tag = ClanVisuals.ClanName ~= "" and ClanVisuals.ClanName or "PROTECTED"
+        local speed = 0.07
+        
+        local hackerChars = {
+            "⍟", "⍣", "⍤", "⍥", "⍦", "⍧", "⍨", "⍩", "⍪", "⍫", "⍬", "⍭", "⍮", "⍯", "⍰", "⍱", "⍲", "⍳", "⍴", "⍵",
+            "⌁", "⌂", "⌃", "⌄", "⌅", "⌆", "⌇", "⌈", "⌉", "⌊", "⌋", "⌌", "⌍", "⌎", "⌏", "⌐", "⌑", "⌒", "⌓", "⌔",
+            "⌕", "⌖", "⌗", "⌘", "⌙", "⌜", "⌝", "⌞", "⌟", "⌠", "⌡", "⌢", "⌣", "⌤", "⌥", "⌦", "⌧"
+        }
+        local glitchChars = {
+            "҉", "҈", "Ҋ", "Ҍ", "Ҏ", "Ґ", "Ғ", "Ҕ", "Җ", "Ҙ", "Қ", "Ҝ", "Ҟ", "Ҡ", "Ң", "Ҥ", "Ҧ", "Ҩ", "Ҫ", "Ҭ",
+            "Ү", "Ұ", "Ҳ", "Ҵ", "Ҷ", "Ҹ", "Һ", "Ҽ", "Ҿ", "Ӏ", "Ӄ", "Ӆ", "Ӈ", "Ӊ", "Ӌ", "Ӎ", "ӏ", "Ӑ", "Ӓ", "Ӕ",
+            "Ӗ", "Ә", "Ӛ", "Ӝ", "Ӟ", "Ӡ", "Ӣ", "Ӥ", "Ӧ", "Ө", "Ӫ", "Ӭ", "Ӯ", "Ӱ", "Ӳ", "Ӵ", "Ӷ", "Ӹ", "Ӻ", "Ӽ"
+        }
+        local matrixChars = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}
+        local binaryChars = {"0","1","0","1","0","1","0","1","0","1"}
+        local glitchFull = {"░", "▒", "▓", "█", "▌", "▐", "▀", "▄", "■", "□", "▪", "▫", "▬", "▭", "▮", "▯"}
+        local brackets = {"[", "]", "(", ")", "{", "}", "<", ">"}
+        local cuneiform = {"𒀀","𒀁","𒀂","𒀃","𒀄","𒀅","𒀆","𒀇","𒀈","𒀉","𒀊","𒀋","𒀌","𒀍","𒀎","𒀏","𒀐","𒀑","𒀒","𒀓","𒀔","𒀕","𒀖","𒀗","𒀘","𒀙","𒀚","𒀛","𒀜","𒀝","𒀞","𒀟","𒀠","𒀡","𒀢","𒀣","𒀤","𒀥","𒀦","𒀧","𒀨","𒀩","𒀪","𒀫","𒀬","𒀭","𒀮","𒀯","𒀰","𒀱","𒀲","𒀳","𒀴","𒀵","𒀶","𒀷","𒀸","𒀹","𒀺","𒀻","𒀼","𒀽","𒀾","𒀿","𒁀","𒁁","𒁂","𒁃","𒁄","𒁅","𒁆","𒁇","𒁈","𒁉","𒁊","𒁋","𒁌","𒁍","𒁎","𒁏","𒅒","𒈔","𒇫","𒄆"}
+        local arabicChars = {"ء","آ","أ","ؤ","إ","ئ","ا","ب","ة","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي","ٱ","ٲ","ٳ","ٴ","ٵ","ٶ","ٷ","ٸ","ٹ","ٺ","ٻ","ټ","ٽ","پ","ٿ","ڀ","ځ","ڂ","ڃ","ڄ","څ","چ","ڇ","ڈ","ډ","ڊ","ڋ","ڌ","ڍ","ڎ","ڏ","ڐ","ڑ","ڒ","ړ"}
+        local chineseChars = {"一","丁","七","万","丈","三","上","下","不","与","丐","丑","专","且","世","丘","丙","业","丛","东","丝","丞","丟","两","严","丧","个","中","丰","串","临","丸","丹","为","主","丽","举","乃","久","么","义","之","乌","乍","乎","乏","乐","乒","乓","乔","乖","乗","乙","九","乞","也","习","乡","书","买","乱","乳","乾","了","予","争","事","二","于","云","互","五","井","亘","亚","些","亡","交","亥","亦","产","亨","亩","享","京","亭","亮","亲","人","什","仅","仆","仇","今","介","仍","从","仑","仓","仔"}
+        local specialMix = {"𒅒","𒈔","𒅒","𒇫","𒄆","𒄆","𓁹","✞","𒀱","✞","𓁹","𒄆"}
+        
+        local function getTag()
+            local effects = {
+                function()
+                    local t = ""
+                    for i = 1, #tag do
+                        local rand = math.random()
+                        if rand < 0.12 then t = t .. hackerChars[math.random(#hackerChars)]
+                        elseif rand < 0.24 then t = t .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.36 then t = t .. matrixChars[math.random(#matrixChars)]
+                        elseif rand < 0.48 then t = t .. cuneiform[math.random(#cuneiform)]
+                        elseif rand < 0.60 then t = t .. arabicChars[math.random(#arabicChars)]
+                        elseif rand < 0.72 then t = t .. chineseChars[math.random(#chineseChars)]
+                        else t = t .. tag:sub(i, i) end
+                    end
+                    if math.random() < 0.3 then t = specialMix[math.random(#specialMix)] .. t .. specialMix[math.random(#specialMix)] end
+                    if math.random() < 0.4 then t = brackets[math.random(#brackets)] .. t .. brackets[math.random(#brackets)] end
+                    return t
+                end,
+                function()
+                    local full = "► " .. tag .. " ◄"
+                    local result = ""
+                    local offset = tick() * 10
+                    for i = 1, #full do
+                        local idx = (i + offset) % #full + 1
+                        local c = full:sub(idx, idx)
+                        if c == " " then result = result .. " "
+                        elseif math.random() < 0.15 then result = result .. glitchFull[math.random(#glitchFull)]
+                        elseif math.random() < 0.10 then result = result .. hackerChars[math.random(#hackerChars)]
+                        elseif math.random() < 0.10 then result = result .. cuneiform[math.random(#cuneiform)]
+                        elseif math.random() < 0.10 then result = result .. arabicChars[math.random(#arabicChars)]
+                        else result = result .. c end
+                    end
+                    if math.random() < 0.25 then result = "𒅒" .. result .. "𒅒" end
+                    return result
+                end,
+                function()
+                    local t = ""
+                    local progress = tick() % 2.5 / 2.5
+                    for i = 1, #tag do
+                        if i / #tag <= progress then t = t .. tag:sub(i, i)
+                        elseif math.random() < 0.3 then t = t .. matrixChars[math.random(#matrixChars)]
+                        elseif math.random() < 0.3 then t = t .. glitchChars[math.random(#glitchChars)]
+                        else t = t .. cuneiform[math.random(#cuneiform)] end
+                    end
+                    if math.random() < 0.2 then t = "𒀱" .. t .. "𒀱" end
+                    return t
+                end,
+                function()
+                    local t = ""
+                    for i = 1, #tag do
+                        if math.random() < 0.35 then
+                            t = t .. binaryChars[math.random(#binaryChars)]
+                            if math.random() < 0.3 then t = t .. binaryChars[math.random(#binaryChars)] end
+                        else t = t .. tag:sub(i, i) end
+                    end
+                    if math.random() < 0.2 then t = "✞" .. t .. "✞" end
+                    if math.random() < 0.3 then t = "[" .. t .. "]" end
+                    return t
+                end,
+                function()
+                    local t = ""
+                    for i = 1, #tag do
+                        local rand = math.random()
+                        if rand < 0.15 then t = t .. tag:sub(i, i)
+                        elseif rand < 0.30 then t = t .. glitchFull[math.random(#glitchFull)]
+                        elseif rand < 0.45 then t = t .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.60 then t = t .. hackerChars[math.random(#hackerChars)]
+                        elseif rand < 0.75 then t = t .. cuneiform[math.random(#cuneiform)]
+                        else t = t .. arabicChars[math.random(#arabicChars)] end
+                    end
+                    if math.random() < 0.3 then t = "𓁹" .. t .. "𓁹" end
+                    return t
+                end,
+                function()
+                    local prefixes = {"$","€","£","¥","¢","₽","₿","₪","₫","₭","₮","₯","₰","₱","₲","₳","₴","₵"}
+                    local t = prefixes[math.random(#prefixes)]
+                    for i = 1, #tag do
+                        local rand = math.random()
+                        if rand < 0.20 then t = t .. matrixChars[math.random(#matrixChars)]
+                        elseif rand < 0.15 then t = t .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.15 then t = t .. cuneiform[math.random(#cuneiform)]
+                        elseif rand < 0.15 then t = t .. chineseChars[math.random(#chineseChars)]
+                        else t = t .. tag:sub(i, i) end
+                    end
+                    if math.random() < 0.35 then t = t .. prefixes[math.random(#prefixes)] end
+                    if math.random() < 0.2 then t = "𒄆" .. t .. "𒄆" end
+                    return t
+                end,
+                function()
+                    local t = ""
+                    for i = 1, #tag do
+                        if math.random() < 0.15 then t = t .. cuneiform[math.random(#cuneiform)]
+                        elseif math.random() < 0.15 then t = t .. arabicChars[math.random(#arabicChars)]
+                        elseif math.random() < 0.15 then t = t .. chineseChars[math.random(#chineseChars)]
+                        else t = t .. tag:sub(i, i) end
+                    end
+                    if math.random() < 0.3 then t = "𒅒𒈔" .. t .. "𒈔𒅒" end
+                    return t
+                end,
+                function()
+                    local full = tag
+                    local result = ""
+                    local offset = tick() * 12
+                    for i = 1, #full do
+                        local idx = (i + offset) % #full + 1
+                        local c = full:sub(idx, idx)
+                        local rand = math.random()
+                        if rand < 0.08 then result = result .. glitchChars[math.random(#glitchChars)]
+                        elseif rand < 0.08 then result = result .. hackerChars[math.random(#hackerChars)]
+                        elseif rand < 0.08 then result = result .. cuneiform[math.random(#cuneiform)]
+                        else result = result .. c end
+                    end
+                    if math.random() < 0.2 then result = "✞" .. result .. "✞" end
+                    return result
+                end
+            }
+            return effects[math.random(#effects)]()
+        end
+        
+        if ClanVisuals._protectThread then ClanVisuals._protectThread = nil end
+        ClanVisuals._protectThread = task.spawn(function()
+            while ClanVisuals.ProtectClan do
+                local newTag = getTag()
+                LP:SetAttribute("ClanTag", newTag)
+                task.wait(speed)
+            end
+        end)
+    else
+        if ClanVisuals._protectThread then
+            task.cancel(ClanVisuals._protectThread)
+            ClanVisuals._protectThread = nil
+        end
+        local clanRemote = game.ReplicatedStorage:FindFirstChild("ClanRemotes")
+        if clanRemote then
+            local getMyClan = clanRemote:FindFirstChild("GetMyClan")
+            if getMyClan and getMyClan:IsA("RemoteFunction") then
+                local success, clanData = pcall(function() return getMyClan:InvokeServer() end)
+                if success and clanData then
+                    LP:SetAttribute("ClanTag", clanData.tag)
+                end
+            end
+        end
+    end
+end, true)
+end
+
+-- ============== MISC ==============
 local MiscOther = { InstantTake = false, PotatoMode = false }
-local Movement = { SpeedEnabled = false, WalkSpeed = 16, InfinityJump = false }
+local Movement = { 
+    SpeedEnabled = false, 
+    WalkSpeed = 16, 
+    InfinityJump = false,
+    FlyEnabled = false,
+    FlySpeed = 80,
+    NoclipEnabled = false
+}
+
+-- Переменные для управления полетом и ноклипом
+local flyActive = false
+local flyConnections = {}
+local noclipActive = false
+local noclipConnections = {}
+
+-- Функция установки скорости с обходом античита
+local function setSpeedBypass(hum, speed)
+    if not hum then return end
+    local STEP = 3
+    for i = 1, STEP do
+        hum.WalkSpeed = speed
+        task.wait(0.05)
+    end
+end
+
+-- Функция полета
+local function startFly()
+    if flyActive then return end
+    flyActive = true
+    
+    local player = LP
+    local char = player.Character
+    if not char then return end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not root or not hum then return end
+    
+    -- Включаем режим плавания
+    hum:ChangeState(Enum.HumanoidStateType.Swimming)
+    
+    local moveDir = Vector3.new(0, 0, 0)
+    local verticalDir = 0
+    local isMoving = false
+    
+    -- Обработка ввода
+    local inputBeganConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed or not flyActive then return end
+        local key = input.KeyCode
+        if key == Enum.KeyCode.W then moveDir = moveDir + Vector3.new(0, 0, -1); isMoving = true
+        elseif key == Enum.KeyCode.S then moveDir = moveDir + Vector3.new(0, 0, 1); isMoving = true
+        elseif key == Enum.KeyCode.A then moveDir = moveDir + Vector3.new(-1, 0, 0); isMoving = true
+        elseif key == Enum.KeyCode.D then moveDir = moveDir + Vector3.new(1, 0, 0); isMoving = true
+        elseif key == Enum.KeyCode.Space then verticalDir = 1
+        elseif key == Enum.KeyCode.LeftShift then verticalDir = -1
+        end
+    end)
+    
+    local inputEndedConn = UserInputService.InputEnded:Connect(function(input, gameProcessed)
+        if gameProcessed or not flyActive then return end
+        local key = input.KeyCode
+        if key == Enum.KeyCode.W then moveDir = moveDir - Vector3.new(0, 0, -1)
+        elseif key == Enum.KeyCode.S then moveDir = moveDir - Vector3.new(0, 0, 1)
+        elseif key == Enum.KeyCode.A then moveDir = moveDir - Vector3.new(-1, 0, 0)
+        elseif key == Enum.KeyCode.D then moveDir = moveDir - Vector3.new(1, 0, 0)
+        elseif key == Enum.KeyCode.Space then verticalDir = 0
+        elseif key == Enum.KeyCode.LeftShift then verticalDir = 0
+        end
+        if moveDir.Magnitude == 0 then isMoving = false end
+    end)
+    
+    -- Основной цикл полета
+    local flySteppedConn = game:GetService("RunService").Stepped:Connect(function()
+        if not flyActive then return end
+        
+        local char = player.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if not root or not hum then return end
+        
+        -- Держим состояние Swimming
+        if hum:GetState() ~= Enum.HumanoidStateType.Swimming then
+            hum:ChangeState(Enum.HumanoidStateType.Swimming)
+        end
+        
+        -- Направление от камеры
+        local camera = workspace.CurrentCamera
+        local forward = Vector3.new(camera.CFrame.LookVector.X, 0, camera.CFrame.LookVector.Z).Unit
+        local right = Vector3.new(camera.CFrame.RightVector.X, 0, camera.CFrame.RightVector.Z).Unit
+        
+        local moveVector = (forward * (-moveDir.Z)) + (right * moveDir.X)
+        if moveVector.Magnitude > 0 then
+            moveVector = moveVector.Unit
+        end
+        
+        local speed = Movement.FlySpeed or 80
+        local verticalSpeed = verticalDir * (speed * 0.6)
+        local vel = (moveVector * speed * (isMoving and 1 or 0)) + Vector3.new(0, verticalSpeed, 0)
+        
+        if not isMoving then
+            vel = Vector3.new(0, verticalSpeed, 0)
+        end
+        
+        root.AssemblyLinearVelocity = vel
+    end)
+    
+    -- Сохраняем соединения
+    flyConnections = {
+        inputBegan = inputBeganConn,
+        inputEnded = inputEndedConn,
+        stepped = flySteppedConn
+    }
+end
+
+local function stopFly()
+    flyActive = false
+    if flyConnections.inputBegan then flyConnections.inputBegan:Disconnect() end
+    if flyConnections.inputEnded then flyConnections.inputEnded:Disconnect() end
+    if flyConnections.stepped then flyConnections.stepped:Disconnect() end
+    flyConnections = {}
+    -- Возвращаем нормальное состояние
+    local char = LP.Character
+    if char then
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum:ChangeState(Enum.HumanoidStateType.Running)
+        end
+    end
+end
+
+-- Функция Noclip
+local function startNoclip()
+    if noclipActive then return end
+    noclipActive = true
+    
+    local player = LP
+    local char = player.Character
+    if not char then return end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not root or not hum then return end
+    
+    local function forceNoCollide()
+        if not noclipActive then return end
+        local char = player.Character
+        if not char then return end
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide == true then
+                part.CanCollide = false
+            end
+        end
+    end
+    
+    -- Отключаем сразу
+    forceNoCollide()
+    
+    local jumpTimer = 0
+    local moveDir = Vector3.new(0, 0, 0)
+    local isMoving = false
+    
+    local inputBeganConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed or not noclipActive then return end
+        local key = input.KeyCode
+        if key == Enum.KeyCode.W then moveDir = moveDir + Vector3.new(0, 0, -1); isMoving = true
+        elseif key == Enum.KeyCode.S then moveDir = moveDir + Vector3.new(0, 0, 1); isMoving = true
+        elseif key == Enum.KeyCode.A then moveDir = moveDir + Vector3.new(-1, 0, 0); isMoving = true
+        elseif key == Enum.KeyCode.D then moveDir = moveDir + Vector3.new(1, 0, 0); isMoving = true
+        end
+    end)
+    
+    local inputEndedConn = UserInputService.InputEnded:Connect(function(input, gameProcessed)
+        if gameProcessed or not noclipActive then return end
+        local key = input.KeyCode
+        if key == Enum.KeyCode.W then moveDir = moveDir - Vector3.new(0, 0, -1)
+        elseif key == Enum.KeyCode.S then moveDir = moveDir - Vector3.new(0, 0, 1)
+        elseif key == Enum.KeyCode.A then moveDir = moveDir - Vector3.new(-1, 0, 0)
+        elseif key == Enum.KeyCode.D then moveDir = moveDir - Vector3.new(1, 0, 0)
+        end
+        if moveDir.Magnitude == 0 then isMoving = false end
+    end)
+    
+    local noclipHeartbeatConn = game:GetService("RunService").Heartbeat:Connect(function(dt)
+        if not noclipActive then return end
+        
+        local char = player.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if not root or not hum then return end
+        
+        -- Отключаем коллизию
+        forceNoCollide()
+        
+        -- Держим прыжковый грейс
+        jumpTimer = jumpTimer + dt
+        if jumpTimer >= 1.3 then
+            hum:Jump()
+            jumpTimer = 0
+        end
+        
+        -- Движение
+        if isMoving then
+            local speed = 40
+            local vel = root.CFrame.LookVector * speed
+            vel = Vector3.new(vel.X, 0, vel.Z)
+            root.AssemblyLinearVelocity = vel
+        else
+            root.AssemblyLinearVelocity = Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+        end
+    end)
+    
+    -- Дополнительный таймер для надежности
+    local noclipSteppedConn = game:GetService("RunService").Stepped:Connect(function()
+        if noclipActive then
+            forceNoCollide()
+        end
+    end)
+    
+    noclipConnections = {
+        inputBegan = inputBeganConn,
+        inputEnded = inputEndedConn,
+        heartbeat = noclipHeartbeatConn,
+        stepped = noclipSteppedConn
+    }
+end
+
+local function stopNoclip()
+    noclipActive = false
+    if noclipConnections.inputBegan then noclipConnections.inputBegan:Disconnect() end
+    if noclipConnections.inputEnded then noclipConnections.inputEnded:Disconnect() end
+    if noclipConnections.heartbeat then noclipConnections.heartbeat:Disconnect() end
+    if noclipConnections.stepped then noclipConnections.stepped:Disconnect() end
+    noclipConnections = {}
+    -- Восстанавливаем коллизию
+    local char = LP.Character
+    if char then
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+    end
+end
 
 do
-local MiscLeft, MiscRight = CreateColumns(pages["Misc"])
+	local MiscLeft, MiscRight = CreateColumns(pages["Misc"])
 
-local OtherCard = CreateCard(MiscLeft, "Other")
-CreateHeader(OtherCard, "Instant Take")
-CreateToggle(OtherCard, "Instant Take", false, function(on) MiscOther.InstantTake = on end)
-CreateHeader(OtherCard, "Potato Mode")
-CreateToggle(OtherCard, "Potato Mode", false, function(on) MiscOther.PotatoMode = on end)
+	local OtherCard = CreateCard(MiscLeft, "Other")
+	CreateHeader(OtherCard, "Instant Take")
+	CreateToggle(OtherCard, "Instant Take", false, function(on) MiscOther.InstantTake = on end)
+	CreateHeader(OtherCard, "Potato Mode")
+	CreateToggle(OtherCard, "Potato Mode", false, function(on) MiscOther.PotatoMode = on end)
 
-local ServerHopCard = CreateCard(MiscLeft, "Server Hop")
-CreateButton(ServerHopCard, "Teleport to random server", function()
-	if VeryEZ_ServerHop then VeryEZ_ServerHop() end
-end)
+	local ServerHopCard = CreateCard(MiscLeft, "Server Hop")
+	CreateButton(ServerHopCard, "Teleport to random server", function()
+		if VeryEZ_ServerHop then VeryEZ_ServerHop() end
+	end)
 
-local MovementCard = CreateCard(MiscRight, "Movement")
-CreateToggle(MovementCard, "Speed Enabled", false, function(on) Movement.SpeedEnabled = on end)
-CreateSlider(MovementCard, "Walkspeed", 16, 32, 16, "", function(v) Movement.WalkSpeed = v end)
-CreateToggle(MovementCard, "Infinity Jump", false, function(on) Movement.InfinityJump = on end)
+	-- ATM Transfer
+	local ATMCard = CreateCard(MiscRight, "ATM Transfer")
+
+	local ATM_FOLDER = "EtherealBeta/atm"
+	local ATM_FILE = ATM_FOLDER .. "/data.json"
+	local hasFS = (writefile and readfile and isfile and isfolder and makefolder) and true or false
+
+	local atmData = { daily = {} }
+
+	local function loadAtmData()
+		if not hasFS then return end
+		if isfile and isfile(ATM_FILE) then
+			local ok, data = pcall(function() return HttpService:JSONDecode(readfile(ATM_FILE)) end)
+			if ok and type(data) == "table" then
+				atmData = data
+				return
+			end
+		end
+		atmData = { daily = {} }
+	end
+
+	local function saveAtmData()
+		if not hasFS then return end
+		pcall(function()
+			if not isfolder(ATM_FOLDER) then makefolder(ATM_FOLDER) end
+			writefile(ATM_FILE, HttpService:JSONEncode(atmData))
+		end)
+	end
+
+	loadAtmData()
+
+	local function getDailyData()
+		local now = os.time()
+		local today = math.floor(now / 86400)
+		if not atmData.daily[LP.UserId] or atmData.daily[LP.UserId].day ~= today then
+			atmData.daily[LP.UserId] = { count = 0, day = today, recipients = {} }
+			saveAtmData()
+		end
+		return atmData.daily[LP.UserId]
+	end
+
+	local atmTarget = CreateTextInput(ATMCard, "Player (nick or DisplayName)", "Enter nickname...", function(text) end)
+	local atmAmount = CreateTextInput(ATMCard, "Amount (max 99,999)", "Enter amount...", function(text)
+		local num = tonumber(text)
+		if num then
+			if num > 200000 then
+				atmAmount.Set("99999")
+			elseif num > 99999 then
+				atmAmount.Set("99999")
+			end
+		end
+	end)
+
+	local atmDailyLabel = Instance.new("TextLabel")
+	atmDailyLabel.BackgroundTransparency = 1
+	atmDailyLabel.Size = UDim2.new(1, 0, 0, 16)
+	atmDailyLabel.Text = "Today: 0/30 transfers"
+	atmDailyLabel.TextColor3 = Color3.fromRGB(180, 180, 200)
+	atmDailyLabel.TextXAlignment = Enum.TextXAlignment.Left
+	atmDailyLabel.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+	atmDailyLabel.TextSize = 11
+	atmDailyLabel.Parent = ATMCard
+
+	local function updateDailyLabel()
+		local d = getDailyData()
+		atmDailyLabel.Text = "Today: " .. d.count .. "/30 transfers"
+	end
+
+	local function doAtmTransfer(targetName, amount, callback)
+		local targetPlayer = nil
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if plr.Name:lower() == targetName:lower() or (plr.DisplayName and plr.DisplayName:lower() == targetName:lower()) then
+				targetPlayer = plr
+				break
+			end
+		end
+		
+		if not targetPlayer then
+			if callback then callback(false) end
+			return
+		end
+		
+		if targetPlayer == LP then
+			if callback then callback(false) end
+			return
+		end
+		
+		local atm = game:GetService("ReplicatedStorage"):FindFirstChild("ATMRemotes")
+		if not atm then
+			if callback then callback(false) end
+			return
+		end
+		
+		local transferRemote = atm:FindFirstChild("TransferMoney")
+		if not transferRemote then
+			if callback then callback(false) end
+			return
+		end
+		
+		local d = getDailyData()
+		if d.count >= 30 then
+			if callback then callback(false) end
+			return
+		end
+		
+		local rkey = tostring(targetPlayer.UserId)
+		if d.recipients[rkey] and d.recipients[rkey] >= 5 then
+			if callback then callback(false) end
+			return
+		end
+		
+		local success, result = pcall(function()
+			return transferRemote:InvokeServer(targetPlayer.UserId, amount)
+		end)
+		
+		if success and result and result.success then
+			d.count = d.count + 1
+			if not d.recipients[rkey] then d.recipients[rkey] = 0 end
+			d.recipients[rkey] = d.recipients[rkey] + 1
+			saveAtmData()
+			updateDailyLabel()
+			if callback then callback(true) end
+		else
+			if callback then callback(false) end
+		end
+	end
+
+	CreateButton(ATMCard, "Transfer", function()
+		local target = atmTarget.Get():gsub("^%s+", ""):gsub("%s+$", "")
+		local amount = tonumber(atmAmount.Get())
+		
+		if target == "" or not amount or amount <= 0 then
+			return
+		end
+		
+		if amount > 99999 then
+			amount = 99999
+			atmAmount.Set("99999")
+		end
+		
+		doAtmTransfer(target, amount, function(success)
+			if success then
+				local d = getDailyData()
+				local remaining = 30 - d.count
+				local toast = Instance.new("Frame")
+				toast.Size = UDim2.new(0, 280, 0, 36)
+				toast.Position = UDim2.new(1, 340, 0, 10)
+				toast.AnchorPoint = Vector2.new(1, 0)
+				toast.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+				toast.BackgroundTransparency = 0.05
+				toast.BorderSizePixel = 0
+				toast.Parent = ScreenGui
+				local corner = Instance.new("UICorner") corner.CornerRadius = UDim.new(0, 10) corner.Parent = toast
+				local stroke = Instance.new("UIStroke") stroke.Color = Color3.fromRGB(255,255,255) stroke.Transparency = 0.9 stroke.Parent = toast
+				local label = Instance.new("TextLabel") label.BackgroundTransparency = 1 label.Size = UDim2.new(1, -20, 1, 0) label.Position = UDim2.new(0, 10, 0, 0) label.Text = "Waiting 17 sec | Left: " .. remaining .. "/30" label.TextColor3 = Color3.fromRGB(255,255,255) label.TextXAlignment = Enum.TextXAlignment.Left label.TextYAlignment = Enum.TextYAlignment.Center label.FontFace = Font.new("rbxassetid://12187365364") label.TextSize = 13 label.Parent = toast
+				local tweenIn = TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+				TweenService:Create(toast, tweenIn, {Position = UDim2.new(1, -10, 0, 10)}):Play()
+				task.delay(3, function()
+					local tweenOut = TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+					local t = TweenService:Create(toast, tweenOut, {Position = UDim2.new(1, 340, 0, 10)})
+					t:Play()
+					t.Completed:Connect(function() toast:Destroy() end)
+				end)
+			end
+		end)
+	end)
+
+	local autoActive = false
+	local autoLoop = nil
+	local autoTarget = ""
+	local autoAmount = 0
+
+	local atmAutoToggle = CreateToggle(ATMCard, "Auto Transfer", false, function(on)
+		if on then
+			local target = atmTarget.Get():gsub("^%s+", ""):gsub("%s+$", "")
+			local amount = tonumber(atmAmount.Get())
+			
+			if target == "" or not amount or amount <= 0 then
+				atmAutoToggle.Set(false)
+				return
+			end
+			
+			if amount > 99999 then
+				amount = 99999
+				atmAmount.Set("99999")
+			end
+			
+			autoTarget = target
+			autoAmount = amount
+			autoActive = true
+			
+			if autoLoop then autoLoop = nil end
+			autoLoop = task.spawn(function()
+				while autoActive do
+					task.wait(17)
+					if not autoActive then break end
+					
+					doAtmTransfer(autoTarget, autoAmount, function(success)
+						if success then
+							local d = getDailyData()
+							local remaining = 30 - d.count
+							local toast = Instance.new("Frame")
+							toast.Size = UDim2.new(0, 280, 0, 36)
+							toast.Position = UDim2.new(1, 340, 0, 10)
+							toast.AnchorPoint = Vector2.new(1, 0)
+							toast.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+							toast.BackgroundTransparency = 0.05
+							toast.BorderSizePixel = 0
+							toast.Parent = ScreenGui
+							local corner = Instance.new("UICorner") corner.CornerRadius = UDim.new(0, 10) corner.Parent = toast
+							local stroke = Instance.new("UIStroke") stroke.Color = Color3.fromRGB(255,255,255) stroke.Transparency = 0.9 stroke.Parent = toast
+							local label = Instance.new("TextLabel") label.BackgroundTransparency = 1 label.Size = UDim2.new(1, -20, 1, 0) label.Position = UDim2.new(0, 10, 0, 0) label.Text = "Waiting 17 sec | Left: " .. remaining .. "/30" label.TextColor3 = Color3.fromRGB(255,255,255) label.TextXAlignment = Enum.TextXAlignment.Left label.TextYAlignment = Enum.TextYAlignment.Center label.FontFace = Font.new("rbxassetid://12187365364") label.TextSize = 13 label.Parent = toast
+							local tweenIn = TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+							TweenService:Create(toast, tweenIn, {Position = UDim2.new(1, -10, 0, 10)}):Play()
+							task.delay(3, function()
+								local tweenOut = TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+								local t = TweenService:Create(toast, tweenOut, {Position = UDim2.new(1, 340, 0, 10)})
+								t:Play()
+								t.Completed:Connect(function() toast:Destroy() end)
+							end)
+						else
+							task.wait(5)
+						end
+					end)
+				end
+			end)
+		else
+			autoActive = false
+			if autoLoop then
+				task.cancel(autoLoop)
+				autoLoop = nil
+			end
+		end
+	end)
+
+	updateDailyLabel()
+
+	-- Movement (обновленный раздел с Fly и Noclip)
+	local MovementCard = CreateCard(MiscRight, "Movement")
+	
+	-- Speed с обходом античита (ползунок до 80)
+	CreateToggle(MovementCard, "Speed Enabled", false, function(on) 
+		Movement.SpeedEnabled = on 
+	end)
+	
+	CreateSlider(MovementCard, "Walkspeed", 16, 80, 16, "", function(v) 
+		Movement.WalkSpeed = v 
+	end)
+	
+	CreateToggle(MovementCard, "Infinity Jump", false, function(on) 
+		Movement.InfinityJump = on 
+	end)
+	
+	-- Fly Enabled
+	CreateToggle(MovementCard, "Fly Enabled", false, function(on) 
+		Movement.FlyEnabled = on
+		if on then
+			startFly()
+		else
+			stopFly()
+		end
+	end)
+	
+	-- Fly Speed
+	CreateSlider(MovementCard, "Fly Speed", 10, 90, 80, "", function(v) 
+		Movement.FlySpeed = v
+	end)
+	
+	-- Noclip Enabled
+	CreateToggle(MovementCard, "Noclip Enabled", false, function(on) 
+		Movement.NoclipEnabled = on
+		if on then
+			startNoclip()
+		else
+			stopNoclip()
+		end
+	end)
+
+	-- Clan Invite
+	local ClanInviteCard = CreateCard(MiscLeft, "Clan Invite")
+
+	local canInvite = false
+	local myClanId = nil
+	local invitedPlayers = {}
+	local inviteCooldowns = {}
+
+	local function checkClanPermissions()
+		local clanRemote = game.ReplicatedStorage:FindFirstChild("ClanRemotes")
+		if not clanRemote then return false end
+
+		local getMyClan = clanRemote:FindFirstChild("GetMyClan")
+		if not getMyClan or not getMyClan:IsA("RemoteFunction") then return false end
+
+		local success, clanData = pcall(function()
+			return getMyClan:InvokeServer()
+		end)
+
+		if not success or not clanData then return false end
+
+		local role = nil
+		for _, member in ipairs(clanData.members or {}) do
+			if member.userId == LP.UserId then
+				role = member.role
+				break
+			end
+		end
+
+		if role ~= "Leader" and role ~= "CoLeader" then return false end
+
+		myClanId = clanData.clanId
+		return true
+	end
+
+	local function invitePlayer(targetName)
+		if not canInvite or targetName == "" then return false end
+		local clanRemote = game.ReplicatedStorage:FindFirstChild("ClanRemotes")
+		if not clanRemote then return false end
+		local inviteRemote = clanRemote:FindFirstChild("InvitePlayer")
+		if not inviteRemote or not inviteRemote:IsA("RemoteFunction") then return false end
+		local ok, result = pcall(function()
+			return inviteRemote:InvokeServer(targetName)
+		end)
+		return ok and result and true or false
+	end
+
+	local function getPlayerName(player)
+		return player.DisplayName or player.Name
+	end
+
+	local function tryInvite(player)
+		if not canInvite then return end
+		local name = getPlayerName(player)
+		if invitedPlayers[name] then return end
+		if inviteCooldowns[name] and tick() - inviteCooldowns[name] < 0.5 then return end
+		local success = invitePlayer(name)
+		if success then
+			invitedPlayers[name] = true
+			task.delay(5, function() invitedPlayers[name] = nil end)
+		end
+		inviteCooldowns[name] = tick()
+	end
+
+	local autoInviteActive = false
+	local autoInviteLoop = nil
+
+	local function startAutoInvite()
+		if autoInviteActive then return end
+		canInvite = checkClanPermissions()
+		if not canInvite then
+			autoInviteToggle.Set(false)
+			return
+		end
+
+		autoInviteActive = true
+
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if plr ~= LP then
+				task.spawn(function() tryInvite(plr) end)
+			end
+		end
+
+		if autoInviteLoop then autoInviteLoop = nil end
+		autoInviteLoop = task.spawn(function()
+			while autoInviteActive do
+				task.wait(2)
+				if not autoInviteActive then break end
+				for _, plr in ipairs(Players:GetPlayers()) do
+					if plr ~= LP then
+						task.spawn(function() tryInvite(plr) end)
+					end
+				end
+			end
+		end)
+	end
+
+	local function stopAutoInvite()
+		autoInviteActive = false
+		if autoInviteLoop then
+			task.cancel(autoInviteLoop)
+			autoInviteLoop = nil
+		end
+		invitedPlayers = {}
+	end
+
+	local autoInviteToggle = CreateToggle(ClanInviteCard, "Auto Invite to Clan", false, function(on)
+		if on then
+			startAutoInvite()
+		else
+			stopAutoInvite()
+		end
+	end)
+
+	local function onPlayerAdded(plr)
+		if autoInviteActive and plr ~= LP then
+			task.wait(0.3)
+			task.spawn(function() tryInvite(plr) end)
+		end
+	end
+
+	Players.PlayerAdded:Connect(onPlayerAdded)
+
+	LP:GetPropertyChangedSignal("Character"):Connect(function()
+		if autoInviteActive then
+			task.wait(1)
+			canInvite = checkClanPermissions()
+			if not canInvite then
+				stopAutoInvite()
+				autoInviteToggle.Set(false)
+			end
+		end
+	end)
+
+	task.wait(0.5)
+	canInvite = checkClanPermissions()
 end
 
 -- ============== СТРОКА ПОИСКА ==============
@@ -3843,10 +4916,24 @@ end
 		if TIME_CHANGER_ENABLED then
 			Lighting.ClockTime = CURRENT_TIME
 		end
+		
+		-- Обновленная обработка скорости с обходом
 		if SPEED_ENABLED then
 			local char = LP.Character
-			local hum = char and char:FindFirstChildOfClass("Humanoid")
-			if hum then hum.WalkSpeed = CURRENT_SPEED end
+			if char then
+				local hum = char:FindFirstChildOfClass("Humanoid")
+				if hum then
+					setSpeedBypass(hum, CURRENT_SPEED)
+				end
+			end
+		else
+			local char = LP.Character
+			if char then
+				local hum = char:FindFirstChildOfClass("Humanoid")
+				if hum and hum.WalkSpeed ~= 16 then
+					hum.WalkSpeed = 16
+				end
+			end
 		end
 	end)
 
@@ -4250,4 +5337,4 @@ do
 	end
 end
 
-print("GUI Ready!") 
+print("GUI Ready!")
