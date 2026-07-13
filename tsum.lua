@@ -4974,6 +4974,7 @@ do
 		{ key = "DAY1_Ab3Cd5Ef7Gh9Ij1Kl3Mn5Op7Qr9St", type = "1day", duration = 86400 },
 		{ key = "DAY1_Zx9Yv7Tt5Rr3Pp1Nn9Ll5Jj7Hh3Ff", type = "1day", duration = 86400 },
         { key = "FUNPAY123", type = "1day", duration = 86400 },
+        { key = "DAY1_Zdafghy1243", type = "1day", duration = 86400 },
 		{ key = "FREE1", type = "1day", duration = 86400 },
 		{ key = "FREE2", type = "1day", duration = 86400 },
 		{ key = "FREE3", type = "1day", duration = 86400 },
