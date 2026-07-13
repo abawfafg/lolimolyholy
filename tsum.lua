@@ -4983,6 +4983,7 @@ do
 		{ key = "WEEK1_Ws4Ed6Rf8Tg0Yh2Uj4Kl6Mn8Op0Qr", type = "7days", duration = 604800 },
 		{ key = "WEEK1_As5Df7Gh9Jk1Lz4Xc6Vb8Nm0Pq2Rt", type = "7days", duration = 604800 },
 		{ key = "WEEK1_Qw4Er6Ty8Ui0Op2As5Df7Gh9Jk1Lz", type = "7days", duration = 604800 },
+        { key = "WEEK1_Adwadfhhgawsgh1213agbabg", type = "7days", duration = 604800 },
 		-- 30 дней
 		{ key = "MONTH1_Xc3Vb5Nm7Pq9Rs2Tu4Wx6Yz8Ab0Cd", type = "30days", duration = 2592000 },
 		{ key = "MONTH1_Er6Ty8Ui0Op2As5Df7Gh9Jk1Lz4Xc", type = "30days", duration = 2592000 },
