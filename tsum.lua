@@ -4979,6 +4979,7 @@ do
         { key = "DAY1_Dfagabnsbsbns124faf", type = "1day", duration = 86400 },
         { key = "DAY1_Dbsgabnsbsbns184faf", type = "1day", duration = 86400 },
         { key = "DAY1_Dwdadsssgabnsbsbns184faf", type = "1day", duration = 86400 },
+        { key = "DAY1_Dw21341adsssgabnsbsbns184faf", type = "1day", duration = 86400 },
 		{ key = "FREE1", type = "1day", duration = 86400 },
 		{ key = "FREE2", type = "1day", duration = 86400 },
 		{ key = "FREE3", type = "1day", duration = 86400 },
