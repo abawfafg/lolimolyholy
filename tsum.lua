@@ -4996,7 +4996,6 @@ do
 		{ key = "FOREVER_H7Kp9M2nVq4Rw8JsLt3FbHc1Zd5Ge", type = "forever", duration = 0 },
 		{ key = "FOREVER_Xy7Tt5Rr3Pp1Nn9Ll5Jj7Hh3Ff2Dd", type = "forever", duration = 0 },
 		{ key = "FOREVER_Ab3Cd5Ef7Gh9Ij1Kl3Mn5Op7Qr9St2", type = "forever", duration = 0 },
-        { key = "FOREVER_Dqdawgnahgkjyoqy214jhgsjgs", type = "forever", duration = 0 },
 		{ key = "MYKEY", type = "forever", duration = 0 },
 	}
 	
